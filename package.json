@@ -1,0 +1,25 @@
+{
+  "name": "cambodian_silk_archives",
+  "version": "1.0.0",
+  "description": "Collection: My archive will digitally document the biological lifecycle, traditional harvesting processes, and unique environmental factors that produce Cambodia's rare, naturally golden raw silk (Tromol Meas).\r Source: The physical samples, tools, and sericulture knowledge will be sourced directly from veteran silkworm farmers and mulberry cultivators on Koh Oknha Tei and Koh Dach.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^15.5.25",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@types/react": "^19.0.4",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "^5.6.3"
+  }
+}
