@@ -1,0 +1,347 @@
+/* ==========================================================================
+   Cambodian Silk Archives — global styles & design tokens
+   Warm, earthy "living archive" aesthetic · museum-grade typography
+   ========================================================================== */
+
+:root {
+  /* ---- Palette: rich sepia inks, gold reserved for accents ---- */
+  --ink: #332a1d; /* rich dark sepia — primary text */
+  --ink-strong: #241b10; /* deepest sepia — headings */
+  --muted: #7c705c; /* secondary text */
+  --faint: #a2947c; /* captions, counts */
+
+  --gold: #c18d2f; /* accent gold — stage labels, Khmer, interactive */
+  --gold-deep: #996e1b; /* accent gold — emphasized / hover */
+  --gold-pale: #f5ebd2; /* soft gold wash */
+
+  --canvas: #f6f1e4; /* page background — warm parchment */
+  --paper: #fffdf7; /* card surface — crisp light cream */
+  --line: #e9dfc6; /* hairline borders */
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-lift: 0 18px 40px rgba(56, 41, 15, 0.14);
+
+  /* ---- Type ---- */
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans: "Khmer OS", "Khmer OS System", "Khmer OS Battambang",
+    "Noto Sans Khmer", "Kantumruy Pro", system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --khmer: "Khmer OS", "Khmer OS System", "Khmer OS Battambang",
+    "Noto Sans Khmer", sans-serif;
+}
+
+/* ---- Base ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(1100px 460px at 50% -10%, rgba(193, 141, 47, 0.14), transparent 62%),
+    var(--canvas);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(193, 141, 47, 0.28);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* ---- Layout ---- */
+.page {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 6rem;
+}
+
+/* ---- Hero ---- */
+.hero {
+  margin: 0 0 3.25rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+  color: var(--gold-deep);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.hero__title {
+  margin: 0;
+  max-width: 18ch;
+  color: var(--ink-strong);
+  font-family: var(--serif);
+  font-size: clamp(2.75rem, 6.5vw, 4.75rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.hero__title-accent {
+  color: var(--gold-deep);
+}
+
+.hero__lead {
+  max-width: 40rem;
+  margin: 1.3rem 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+/* ---- Search ---- */
+.search {
+  max-width: 34rem;
+  margin-top: 2.1rem;
+}
+
+.search__label {
+  display: block;
+  margin: 0 0 0.55rem;
+  color: var(--muted);
+  font-size: 0.83rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.search__box {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.72rem 1rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+}
+
+.search__box:focus-within {
+  border-bottom-color: var(--gold);
+  box-shadow:
+    var(--shadow-soft),
+    0 0 0 4px rgba(193, 141, 47, 0.14);
+}
+
+.search__icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--gold);
+}
+
+.search__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.search__input::placeholder {
+  color: var(--faint);
+}
+
+.search__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  opacity: 0.4;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23996e1b' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m9 9 6 6M15 9l-6 6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.search__input::-webkit-search-cancel-button:hover {
+  opacity: 0.8;
+}
+
+.search__count {
+  margin: 0.7rem 0 0;
+  color: var(--faint);
+  font-size: 0.85rem;
+}
+
+/* ---- Grid ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1.75rem;
+}
+
+@media (min-width: 1180px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ---- Detail page ---- */
+.page--detail {
+  padding-top: 2.25rem;
+}
+
+.back {
+  display: inline-block;
+  color: var(--gold-deep);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.back:hover {
+  color: var(--gold);
+  transform: translateX(-3px);
+}
+
+.detail {
+  margin-top: 2rem;
+}
+
+.detail__media {
+  height: clamp(260px, 42vw, 520px);
+  overflow: hidden;
+  background: var(--gold-pale);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+}
+
+.detail__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail__content {
+  max-width: 48rem;
+  padding: 2.25rem 0 0;
+}
+
+.detail__stage {
+  margin: 0 0 0.75rem;
+  color: var(--gold-deep);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.detail__title {
+  margin: 0;
+  color: var(--ink-strong);
+  font-family: var(--serif);
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+
+.detail__khmer {
+  margin: 0.7rem 0 0;
+  color: var(--gold);
+  font-family: var(--khmer);
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.detail__desc {
+  margin: 1.5rem 0 0;
+  max-width: 46rem;
+  color: var(--ink);
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.detail__meta {
+  margin: 2rem 0 0;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line);
+}
+
+.detail__meta p {
+  margin: 0.45rem 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.detail__meta strong {
+  color: var(--ink);
+}
+
+.detail__notes {
+  margin: 2.5rem 0 0;
+  padding: 1.4rem 1.5rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+}
+
+.detail__notes h2 {
+  margin: 0 0 0.5rem;
+  color: var(--ink-strong);
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.detail__notes p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ---- Accessibility: respect reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
