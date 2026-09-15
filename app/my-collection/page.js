@@ -40,6 +40,13 @@ export default async function MyCollection() {
     dbError = err.message;
   }
 
+  // Keep the collection in lifecycle order by stage number.
+  myEntries.sort((a, b) => {
+    const na = parseInt(a.stage, 10) || 0;
+    const nb = parseInt(b.stage, 10) || 0;
+    return na - nb;
+  });
+
   return (
     <main className="page">
       <h1 className="page__title">My collection</h1>

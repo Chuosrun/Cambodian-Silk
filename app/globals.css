@@ -643,3 +643,25 @@ textarea.field__input {
 .collection__item form {
   margin: 0;
 }
+
+/* ---- Duplicate-stage decision prompt ---- */
+.choice-box {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(193, 141, 47, 0.45);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  background: rgba(193, 141, 47, 0.08);
+}
+
+.choice-box p {
+  margin: 0 0 0.85rem;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.choice-box__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
