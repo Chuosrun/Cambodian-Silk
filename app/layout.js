@@ -1,4 +1,5 @@
 import './globals.css';
+import SiteNav from './components/SiteNav';
 
 export const metadata = {
   title: 'Cambodian Silk Archives',
@@ -17,7 +18,10 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <SiteNav />
+        {children}
+      </body>
     </html>
   );
 }

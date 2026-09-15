@@ -49,7 +49,7 @@ I kept the archive structure and the warm museum-style direction, but I rejected
 ### 2. Technique
 
 Role prompting with a constrained refinement prompt.
-
+    
 ### 3. What Came Back
 
 The AI identified and corrected the spacing issue and the broken or gibberish search-bar text without changing the archive's underlying data or search logic.

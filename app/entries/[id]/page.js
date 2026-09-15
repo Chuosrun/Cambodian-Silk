@@ -1,16 +1,25 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import entries from '../../../data/entries';
+import { getEntryBySlug } from '@/lib/data';
+import CoverImage from '@/components/CoverImage';
 
-export function generateStaticParams() {
-  return entries.map((entry) => ({ id: entry.id }));
-}
+export const dynamic = 'force-dynamic';
 
 export default async function EntryPage({ params }) {
   const { id } = await params;
-  const entry = entries.find((item) => item.id === id);
+  const entry = await getEntryBySlug(id);
 
   if (!entry) notFound();
+
+  const {
+    stage,
+    title,
+    khmer_title,
+    description,
+    contributor,
+    place,
+    image_url,
+  } = entry;
 
   return (
     <main className="page page--detail">
@@ -20,23 +29,29 @@ export default async function EntryPage({ params }) {
 
       <article className="detail">
         <div className="detail__media">
-          <img src={entry.image} alt={entry.title} />
+          <CoverImage
+            src={image_url}
+            alt={title}
+            monogram={String(khmer_title || title || 'ស').trim()[0] || 'ស'}
+          />
         </div>
 
         <div className="detail__content">
-          <p className="detail__stage">STAGE {entry.stage}</p>
-          <h1 className="detail__title">{entry.title}</h1>
-          <p className="detail__khmer" lang="km">
-            {entry.khmerTitle}
-          </p>
-          <p className="detail__desc">{entry.description}</p>
+          {stage && <p className="detail__stage">STAGE {stage}</p>}
+          <h1 className="detail__title">{title}</h1>
+          {khmer_title && (
+            <p className="detail__khmer" lang="km">
+              {khmer_title}
+            </p>
+          )}
+          <p className="detail__desc">{description || 'No description available.'}</p>
 
           <div className="detail__meta">
             <p>
-              <strong>Contributor:</strong> {entry.contributor}
+              <strong>Contributor:</strong> {contributor || 'Unknown'}
             </p>
             <p>
-              <strong>Place:</strong> {entry.place}
+              <strong>Place:</strong> {place || 'Unknown'}
             </p>
           </div>
 

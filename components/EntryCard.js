@@ -1,29 +1,38 @@
 import Link from 'next/link';
 import styles from './EntryCard.module.css';
+import CoverImage from './CoverImage';
 
-export default function EntryCard({
-  id,
-  stage,
-  title,
-  khmerTitle,
-  description,
-  contributor,
-  place,
-  image,
-}) {
+export default function EntryCard({ entry }) {
+  const {
+    slug,
+    stage,
+    title,
+    khmer_title,
+    description,
+    contributor,
+    place,
+    image_url,
+  } = entry;
+
   return (
-    <Link href={`/entries/${id}`} className={styles.link}>
+    <Link href={`/entries/${slug}`} className={styles.link}>
       <article className={styles.card}>
         <div className={styles.media}>
-          <img src={image} alt={title || 'Silk archive entry'} loading="lazy" />
+          <CoverImage
+            src={image_url}
+            alt={title || 'Silk archive entry'}
+            monogram={String(khmer_title || title || 'ស').trim()[0] || 'ស'}
+          />
         </div>
 
         <div className={styles.content}>
-          <span className={styles.stage}>STAGE {stage}</span>
+          {stage && <span className={styles.stage}>STAGE {stage}</span>}
           <h2 className={styles.title}>{title || 'Untitled Entry'}</h2>
-          <p className={styles.khmer} lang="km">
-            {khmerTitle}
-          </p>
+          {khmer_title && (
+            <p className={styles.khmer} lang="km">
+              {khmer_title}
+            </p>
+          )}
           <p className={styles.desc}>{description || 'No description available.'}</p>
 
           <div className={styles.meta}>

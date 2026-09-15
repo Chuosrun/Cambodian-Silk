@@ -201,7 +201,7 @@ img {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 1.75rem;
+  gap: 2rem;
 }
 
 @media (min-width: 1180px) {
@@ -245,7 +245,8 @@ img {
   height: clamp(260px, 42vw, 520px);
   overflow: hidden;
   background: var(--gold-pale);
-  border-radius: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   box-shadow: var(--shadow-soft);
 }
 
@@ -344,4 +345,301 @@ img {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ============================================================
+   Sprint 2 — navigation
+   ============================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 253, 247, 0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header__inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-header__brand {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-strong);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.site-header__brand:hover {
+  color: var(--gold-deep);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.nav__link {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.nav__link:hover {
+  color: var(--gold-deep);
+}
+
+/* ============================================================
+   Sprint 2 — buttons
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn--primary {
+  background: var(--gold);
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--gold-deep);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn--ghost {
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.btn--ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold-deep);
+}
+
+.btn--danger {
+  border-color: rgba(179, 84, 30, 0.35);
+  color: #b3541e;
+}
+
+.btn--danger:hover {
+  background: rgba(179, 84, 30, 0.08);
+}
+
+.btn--small {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+}
+
+/* ============================================================
+   Sprint 2 — form fields
+   ============================================================ */
+.field {
+  margin: 0 0 1rem;
+}
+
+.field:last-child {
+  margin-bottom: 1.25rem;
+}
+
+.field__label {
+  display: block;
+  margin: 0 0 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.field__label small {
+  font-weight: 500;
+  color: var(--faint);
+}
+
+.field__input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(193, 141, 47, 0.14);
+}
+
+.field__input::placeholder {
+  color: var(--faint);
+}
+
+textarea.field__input {
+  resize: vertical;
+}
+
+/* ============================================================
+   Sprint 2 — auth pages
+   ============================================================ */
+.page--auth {
+  max-width: 30rem;
+}
+
+.auth-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  padding: 2rem;
+}
+
+.auth-card h1 {
+  margin: 0 0 0.3rem;
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.auth-card__lead {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.auth__alt {
+  margin: 1.2rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.auth__alt a {
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+/* ============================================================
+   Sprint 2 — notices
+   ============================================================ */
+.notice {
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  margin: 0 0 1.25rem;
+}
+
+.notice--success {
+  background: rgba(46, 125, 50, 0.12);
+  border: 1px solid rgba(46, 125, 50, 0.35);
+  color: #2e6b32;
+}
+
+.notice--error {
+  background: rgba(179, 84, 30, 0.1);
+  border: 1px solid rgba(179, 84, 30, 0.35);
+  color: #a34d17;
+}
+
+/* ============================================================
+   Sprint 2 — my collection & entry form
+   ============================================================ */
+.page__title {
+  margin: 0 0 0.35rem;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink-strong);
+}
+
+.page__lead {
+  margin: 0 0 2rem;
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.entry-form {
+  margin: 0 0 2.5rem;
+  padding: 1.5rem 1.5rem 1.75rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+}
+
+.entry-form h2 {
+  margin: 0 0 1.2rem;
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.entry-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 560px) {
+  .entry-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1.75rem;
+}
+
+.collection__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.collection__item form {
+  margin: 0;
 }

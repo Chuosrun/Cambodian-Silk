@@ -1,0 +1,41 @@
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: all 0.3s ease;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(140% 140% at 15% 0%, rgba(193, 141, 47, 0.2), transparent 55%),
+    repeating-linear-gradient(
+    45deg,
+    rgba(193, 141, 47, 0.07) 0 10px,
+    transparent 10px 20px
+    ),
+    var(--gold-pale);
+}
+
+.monogram {
+  font-family: var(--khmer);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: rgba(154, 111, 28, 0.5);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.rule {
+  width: 2.75rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(154, 111, 28, 0.45), transparent);
+}
