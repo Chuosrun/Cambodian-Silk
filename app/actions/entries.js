@@ -17,8 +17,10 @@ function slugify(text) {
 
 export async function createEntry(formData) {
   let user = null;
+  let supabaseHandle = null;
+
   try {
-    const supabaseHandle = await createClient();
+    supabaseHandle = await createClient();
     const { data } = await supabaseHandle.auth.getUser();
     user = data.user;
   } catch (err) {
