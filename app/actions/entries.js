@@ -16,10 +16,14 @@ function slugify(text) {
 }
 
 export async function createEntry(formData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const supabaseHandle = await createClient();
+    const { data } = await supabaseHandle.auth.getUser();
+    user = data.user;
+  } catch (err) {
+    return { error: err.message || 'Could not connect to Supabase.' };
+  }
   if (!user) return { error: 'You need to be signed in to write.' };
 
   const title = String(formData.get('title') || '').trim();
@@ -27,20 +31,23 @@ export async function createEntry(formData) {
 
   const slug = `${slugify(title)}-${crypto.randomUUID().slice(0, 6)}`;
 
-  const { error } = await supabase.from('entries').insert({
-    user_id: user.id,
-    slug,
-    title,
-    khmer_title: String(formData.get('khmer_title') || '').trim(),
-    description: String(formData.get('description') || '').trim(),
-    place: String(formData.get('place') || '').trim(),
-    image_url: String(formData.get('image_url') || '').trim(),
-    stage: String(formData.get('stage') || '').trim(),
-    contributor:
-      user.user_metadata?.display_name?.trim() || 'Anonymous collector',
-  });
+  try {
+    const { error } = await supabaseHandle.from('entries').insert({
+      user_id: user.id,
+      slug,
+      title,
+      khmer_title: String(formData.get('khmer_title') || '').trim(),
+      description: String(formData.get('description') || '').trim(),
+      place: String(formData.get('place') || '').trim(),
+      image_url: String(formData.get('image_url') || '').trim(),
+      stage: String(formData.get('stage') || '').trim(),
+      contributor: user.user_metadata?.display_name?.trim() || 'Anonymous collector',
+    });
 
-  if (error) return { error: error.message };
+    if (error) return { error: error.message };
+  } catch (err) {
+    return { error: err.message || 'Something went wrong on the server.' };
+  }
 
   revalidatePath('/');
   revalidatePath('/my-collection');
@@ -48,22 +55,31 @@ export async function createEntry(formData) {
 }
 
 export async function deleteEntry(formData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let supabaseHandle = null;
+  let user = null;
+  try {
+    supabaseHandle = await createClient();
+    const { data } = await supabaseHandle.auth.getUser();
+    user = data.user;
+  } catch (err) {
+    return { error: err.message || 'Could not connect to Supabase.' };
+  }
   if (!user) return { error: 'You need to be signed in.' };
 
   const slug = String(formData.get('slug') || '');
   if (!slug) return { error: 'Missing entry.' };
 
-  const { error } = await supabase
-    .from('entries')
-    .delete()
-    .eq('slug', slug)
-    .eq('user_id', user.id); // RLS enforces this too — belt and braces.
+  try {
+    const { error } = await supabaseHandle
+      .from('entries')
+      .delete()
+      .eq('slug', slug)
+      .eq('user_id', user.id); // RLS enforces this too — belt and braces.
 
-  if (error) return { error: error.message };
+    if (error) return { error: error.message };
+  } catch (err) {
+    return { error: err.message || 'Something went wrong on the server.' };
+  }
 
   revalidatePath('/');
   revalidatePath('/my-collection');

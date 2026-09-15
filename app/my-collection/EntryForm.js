@@ -43,7 +43,14 @@ export default function EntryForm({ user }) {
     const form = new FormData(event.currentTarget);
     form.set('image_url', imageUrl);
 
-    const result = await createEntry(form);
+    let result = null;
+    try {
+      result = await createEntry(form);
+    } catch (err) {
+      setStatus({ kind: 'error', message: err.message || 'Something went wrong.' });
+      setLoading(false);
+      return;
+    }
 
     if (result?.ok) {
       setStatus({ kind: 'success', message: 'Entry added to your collection.' });
