@@ -13,6 +13,9 @@ export default function EntryForm({ user }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    // Capture the form now — React nulls currentTarget after the handler
+    // yields at an `await`, so it can't be read later.
+    const formEl = event.currentTarget;
     setLoading(true);
     setStatus(null);
 
@@ -40,7 +43,7 @@ export default function EntryForm({ user }) {
       imageUrl = supabase.storage.from('entry-images').getPublicUrl(path).data.publicUrl;
     }
 
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(formEl);
     form.set('image_url', imageUrl);
 
     let result = null;
@@ -54,7 +57,7 @@ export default function EntryForm({ user }) {
 
     if (result?.ok) {
       setStatus({ kind: 'success', message: 'Entry added to your collection.' });
-      event.currentTarget.reset();
+      formEl.reset();
       if (fileRef.current) fileRef.current.value = '';
       router.refresh();
     } else {
