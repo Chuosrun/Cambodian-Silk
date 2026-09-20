@@ -29,7 +29,9 @@ export default function LoginForm() {
     }
 
     if (signInError) {
-      setError(signInError.message);
+      // Never reveal whether an email exists (user enumeration).
+      // Wrong password and unknown email get the same message.
+      setError('Invalid email or password.');
       setLoading(false);
       return;
     }
