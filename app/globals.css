@@ -406,6 +406,19 @@ img {
   color: var(--gold-deep);
 }
 
+.nav__email {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--faint);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 16rem;
+}
+
 /* ============================================================
    Sprint 2 — buttons
    ============================================================ */
