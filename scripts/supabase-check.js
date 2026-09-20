@@ -14,7 +14,7 @@ function readEnv(path) {
 }
 
 const env = readEnv('.env.local');
-const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 
 (async () => {
   const { count, error } = await supabase
