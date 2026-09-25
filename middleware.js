@@ -13,7 +13,7 @@ export async function middleware(request) {
 
   const supabase = createServerClient(
     env.url,
-    env.anonKey,
+    env.publishableKey,
     {
       cookies: {
         getAll() {
