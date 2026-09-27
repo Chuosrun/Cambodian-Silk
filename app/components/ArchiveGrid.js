@@ -15,7 +15,7 @@ export default function ArchiveGrid({ entries }) {
   });
 
   return (
-    <>
+    <main className="page">
       <header className="hero">
         <p className="hero__eyebrow">សារមន្ទីរសូត្រខ្មែរ · A living archive</p>
         <h1 className="hero__title">
@@ -70,6 +70,6 @@ export default function ArchiveGrid({ entries }) {
           <p className="empty">No entries found. មិនមានកំណត់ត្រាដែលត្រូវគ្នាទេ។</p>
         )}
       </section>
-    </>
+    </main>
   );
 }
