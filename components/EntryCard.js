@@ -2,6 +2,17 @@ import Link from 'next/link';
 import styles from './EntryCard.module.css';
 import CoverImage from './CoverImage';
 
+function formatDate(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
 export default function EntryCard({ entry }) {
   const {
     slug,
@@ -12,7 +23,10 @@ export default function EntryCard({ entry }) {
     contributor,
     place,
     image_url,
-  } = entry;
+    created_at,
+  } = entry || {};
+
+  const dateLabel = formatDate(created_at);
 
   return (
     <Link href={`/entries/${slug}`} className={styles.link}>
@@ -26,7 +40,11 @@ export default function EntryCard({ entry }) {
         </div>
 
         <div className={styles.content}>
-          {stage && <span className={styles.stage}>STAGE {stage}</span>}
+          <div className={styles.kicker}>
+            {stage && <span className={styles.stage}>STAGE {stage}</span>}
+            {dateLabel && <span className={styles.date}>{dateLabel}</span>}
+          </div>
+
           <h2 className={styles.title}>{title || 'Untitled Entry'}</h2>
           {khmer_title && (
             <p className={styles.khmer} lang="km">
@@ -36,14 +54,15 @@ export default function EntryCard({ entry }) {
           <p className={styles.desc}>{description || 'No description available.'}</p>
 
           <div className={styles.meta}>
-            <p>
-              <span className={styles.label}>Contributor: </span>
-              {contributor || 'Unknown'}
-            </p>
-            <p>
-              <span className={styles.label}>Place: </span>
-              {place || 'Unknown'}
-            </p>
+            <span>{contributor || 'Anonymous'}</span>
+            {place && (
+              <>
+                <span className={styles.metaDot} aria-hidden="true">
+                  ·
+                </span>
+                <span>{place}</span>
+              </>
+            )}
           </div>
 
           <span className={styles.explore}>
