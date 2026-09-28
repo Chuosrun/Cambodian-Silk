@@ -196,6 +196,18 @@ export default function EntryForm({ user }) {
         />
       </div>
 
+      <div className="field">
+        <label className="field__label" htmlFor="entry-source">
+          Source <small>(museum or origin)</small>
+        </label>
+        <input
+          id="entry-source"
+          className="field__input"
+          name="source"
+          placeholder="e.g. National Museum of Cambodia"
+        />
+      </div>
+
       <div className="entry-form__row">
         <div className="field">
           <label className="field__label" htmlFor="entry-place">

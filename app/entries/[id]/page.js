@@ -19,6 +19,7 @@ export default async function EntryPage({ params }) {
     contributor,
     place,
     image_url,
+    source,
   } = entry;
 
   return (
@@ -50,9 +51,16 @@ export default async function EntryPage({ params }) {
             <p>
               <strong>Contributor:</strong> {contributor || 'Unknown'}
             </p>
-            <p>
-              <strong>Place:</strong> {place || 'Unknown'}
-            </p>
+            {place && (
+              <p>
+                <strong>Place:</strong> {place}
+              </p>
+            )}
+            {source && (
+              <p>
+                <strong>Source:</strong> {source}
+              </p>
+            )}
           </div>
 
           <section className="detail__notes" aria-labelledby="notes-heading">

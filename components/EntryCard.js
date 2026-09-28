@@ -23,6 +23,7 @@ export default function EntryCard({ entry }) {
     contributor,
     place,
     image_url,
+    source,
     created_at,
   } = entry || {};
 
@@ -61,6 +62,20 @@ export default function EntryCard({ entry }) {
                   ·
                 </span>
                 <span>{place}</span>
+              </>
+            )}
+            {source && (
+              <>
+                <span className={styles.metaDot} aria-hidden="true">
+                  ·
+                </span>
+                <span className={styles.source}>
+                  <svg className={styles.sourceIcon} viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <rect x="1" y="6" width="14" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M5 6V4a3 3 0 016 0v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  </svg>
+                  {source}
+                </span>
               </>
             )}
           </div>

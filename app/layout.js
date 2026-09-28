@@ -1,10 +1,19 @@
 import './globals.css';
 import SiteNav from './components/SiteNav';
+import Footer from '../components/Footer';
 
 export const metadata = {
   title: 'Cambodian Silk Archives',
   description:
     "Documenting Cambodia's rare, naturally golden raw silk (Tromol Meas) and its traditional lifecycle.",
+  icons: { icon: '/favicon.svg' },
+  openGraph: {
+    title: 'Cambodian Silk Archives',
+    description:
+      "Documenting Cambodia's rare, naturally golden raw silk (Tromol Meas) and its traditional lifecycle.",
+    type: 'website',
+    locale: 'en_KM',
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -21,6 +30,7 @@ export default function RootLayout({ children }) {
       <body>
         <SiteNav />
         {children}
+        <Footer />
       </body>
     </html>
   );

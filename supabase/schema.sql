@@ -21,6 +21,7 @@ create table if not exists public.entries (
   contributor text not null default '',
   place text not null default '',
   image_url text not null default '',
+  source text not null default '',
   created_at timestamptz not null default now()
 );
 

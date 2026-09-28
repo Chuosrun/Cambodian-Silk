@@ -96,6 +96,7 @@ export async function createEntry(formData, options = {}) {
       image_url: String(formData.get('image_url') || '').trim(),
       stage,
       contributor: user.user_metadata?.display_name?.trim() || 'Anonymous collector',
+      source: String(formData.get('source') || '').trim(),
     });
 
     if (error) return { error: error.message };
