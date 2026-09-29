@@ -40,11 +40,11 @@ export default async function MyCollection() {
     dbError = err.message;
   }
 
-  // Keep the collection in lifecycle order by stage number.
+  const STAGE_ORDER = { Silkworm: 1, Cocoon: 2, Thread: 3, Cloth: 4 };
+
+  // Keep the collection in lifecycle order.
   myEntries.sort((a, b) => {
-    const na = parseInt(a.stage, 10) || 0;
-    const nb = parseInt(b.stage, 10) || 0;
-    return na - nb;
+    return (STAGE_ORDER[a.stage] || 0) - (STAGE_ORDER[b.stage] || 0);
   });
 
   return (

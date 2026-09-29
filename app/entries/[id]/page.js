@@ -38,7 +38,7 @@ export default async function EntryPage({ params }) {
         </div>
 
         <div className="detail__content">
-          {stage && <p className="detail__stage">STAGE {stage}</p>}
+          {stage && <p className="detail__stage">{stage.toUpperCase()}</p>}
           <h1 className="detail__title">{title}</h1>
           {khmer_title && (
             <p className="detail__khmer" lang="km">

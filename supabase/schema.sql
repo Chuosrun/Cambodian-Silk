@@ -10,6 +10,8 @@ create extension if not exists "pgcrypto";
 -- 2) The archive entries table.
 --    Seed rows (Sprint 1's 8 entries) have user_id = NULL (owned by nobody).
 --    Contributor rows belong to exactly one auth user (user_id).
+--    is_seed = true marks original archive entries, which are excluded
+--    from bulk operations like stage-reorder even if they share a user_id.
 create table if not exists public.entries (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete cascade,
@@ -22,7 +24,11 @@ create table if not exists public.entries (
   place text not null default '',
   image_url text not null default '',
   source text not null default '',
-  created_at timestamptz not null default now()
+  is_seed boolean not null default false,
+  created_at timestamptz not null default now(),
+
+  constraint entries_stage_check
+    check (stage in ('Silkworm', 'Cocoon', 'Thread', 'Cloth', ''))
 );
 
 -- 3) Row-Level Security: the actual security boundary.
@@ -66,31 +72,33 @@ create policy "entry_images_owner_delete" on storage.objects
     and auth.uid()::text = (storage.foldername(name))[1]
   );
 
--- 5) Seed the 8 Sprint 1 entries.
-insert into public.entries (slug, stage, title, khmer_title, description, contributor, place, image_url)
+-- 5) Seed the 8 Sprint 1 entries with lifecycle stage names, not numeric codes.
+--    is_seed = true marks these as original archive entries — the app's reorder
+--    and duplicate detection will skip them.
+insert into public.entries (slug, stage, title, khmer_title, description, contributor, place, image_url, source, is_seed)
 values
-  ('slek-mon', '01', 'Young Silkworms Feeding', 'ដង្កូវនាងកំពុងស៊ីស្លឹកមន',
+  ('slek-mon', 'Silkworm', 'Young Silkworms Feeding', 'ដង្កូវនាងកំពុងស៊ីស្លឹកមន',
    'Newly hatched silkworms are placed in wide, flat bamboo trays and fed freshly chopped young mulberry leaves.',
-   'Cambodian Silk Archives', 'Mulberry farms along the Mekong', '/images/01_Young_Silkworms_Feeding.jpg'),
-  ('feeding-cycle', '02', 'The Feeding Cycle', 'វដ្តនៃការស៊ីស្លឹកមន',
+   'Cambodian Silk Archives', 'Mulberry farms along the Mekong', '/images/01_Young_Silkworms_Feeding.jpg', '', true),
+  ('feeding-cycle', 'Silkworm', 'The Feeding Cycle', 'វដ្តនៃការស៊ីស្លឹកមន',
    'For roughly 25 to 30 days, the worms eat relentlessly, grow rapidly, and shed their skin several times before pupating.',
-   'Cambodian Silk Archives', 'Cambodian sericulture farms', '/images/01_Young_Silkworms_Feeding.jpg'),
-  ('spinning-cocoons', '03', 'Spinning the Golden Cocoon', 'ការបង្វិលសំបុកសូត្រមាស',
+   'Cambodian Silk Archives', 'Cambodian sericulture farms', '/images/01_Young_Silkworms_Feeding.jpg', '', true),
+  ('spinning-cocoons', 'Cocoon', 'Spinning the Golden Cocoon', 'ការបង្វិលសំបុកសូត្រមាស',
    'Mature caterpillars move onto dried twigs or woven nesting frames and spin liquid fibroin around themselves in a continuous figure-eight pattern.',
-   'Cambodian Silk Archives', 'Koh Oknha Tei', '/images/03_Spinning_Cocoons_Hanging.jpg'),
-  ('golden-cocoons', '04', 'Golden Cocoons on Branches', 'សំបុកនាងមាសលើមែកឈើ',
+   'Cambodian Silk Archives', 'Koh Oknha Tei', '/images/03_Spinning_Cocoons_Hanging.jpg', '', true),
+  ('golden-cocoons', 'Cocoon', 'Golden Cocoons on Branches', 'សំបុកនាងមាសលើមែកឈើ',
    'Traditional Cambodian silkworms naturally produce vibrant golden-yellow casings, which are gathered after the pupae fully enclose themselves.',
-   'Cambodian Silk Archives', 'Cambodia', '/images/04_Golden_Cocoons_on_Branches.jpg'),
-  ('harvested-cocoons', '05', 'Harvested Cocoons', 'ការប្រមូលសំបុកសូត្រ',
+   'Cambodian Silk Archives', 'Cambodia', '/images/04_Golden_Cocoons_on_Branches.jpg', '', true),
+  ('harvested-cocoons', 'Cocoon', 'Harvested Cocoons', 'ការប្រមូលសំបុកសូត្រ',
    'The hardened cocoons are manually plucked from their branches and gathered in baskets before the extraction process begins.',
-   'Cambodian Silk Archives', 'Koh Oknha Tei', '/images/05_Harvested_Cocoons_Basket.jpg'),
-  ('boiling-cocoons', '06', 'Boiling and Extraction', 'ការដាំសំបុកសូត្រ',
-   'Cocoons are submerged in boiling water over a charcoal or wood-fired stove. The heat prevents the pupa from damaging the silk and melts the sericin glue.',
-   'Cambodian Silk Archives', 'Koh Dach', '/images/06_Boiling_Cocoons_Pot.jpg'),
-  ('reeling-silk', '07', 'Reeling the Silk', 'ការស្រាវសូត្រ',
+   'Cambodian Silk Archives', 'Koh Oknha Tei', '/images/05_Harvested_Cocoons_Basket.jpg', '', true),
+  ('boiling-cocoons', 'Thread', 'Boiling and Extraction', 'ការដាំសំបុកសូត្រ',
+   'Cocoons are submerged in boiling water over a charcoal or wood-fired stove. The heat softens the sericin gum, allowing the delicate fibres to be unwound, and prevents the pupa from cutting through the silk — a critical step between harvest and reeling.',
+   'Cambodian Silk Archives', 'Koh Dach', '/images/06_Boiling_Cocoons_Pot.jpg', '', true),
+  ('reeling-silk', 'Thread', 'Reeling the Silk', 'ការស្រាវសូត្រ',
    'A weaver catches loose filaments from the hot water, twists threads from dozens of cocoons together, and hand-reels the strand onto a wooden spinning wheel.',
-   'Cambodian Silk Archives', 'Koh Dach', '/images/07_Reeling_Silk_Spinning_Wheel.jpg'),
-  ('drying-silk-yarn', '08', 'Drying Finished Silk Yarn', 'ការហាលអំបោះសូត្រ',
+   'Cambodian Silk Archives', 'Koh Dach', '/images/07_Reeling_Silk_Spinning_Wheel.jpg', '', true),
+  ('drying-silk-yarn', 'Cloth', 'Drying Finished Silk Yarn', 'ការហាលអំបោះសូត្រ',
    'Raw silk skeins are washed to remove residual gum, hung in the sun to dry, and sometimes dyed before being loaded onto a traditional loom.',
-   'Cambodian Silk Archives', 'Cambodia', '/images/08_Drying_Finished_Silk_Yarn.jpg')
+   'Cambodian Silk Archives', 'Cambodia', '/images/08_Drying_Finished_Silk_Yarn.jpg', '', true)
 on conflict (slug) do nothing;

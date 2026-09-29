@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,6 @@ import { createEntry } from '../actions/entries';
 export default function EntryForm({ user }) {
   const router = useRouter();
   const fileRef = useRef(null);
-  const stageRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
   const [pending, setPending] = useState(null); // duplicate-stage decision
@@ -23,37 +22,55 @@ export default function EntryForm({ user }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    // Capture the form now — React nulls currentTarget after the handler
-    // yields at an `await`, so it can't be read later.
     const formEl = event.currentTarget;
     setLoading(true);
     setStatus(null);
     setPending(null);
 
-    let imageUrl = '';
+    // --- Client-side image validation ---
     const file = fileRef.current?.files?.[0];
-
-    if (file) {
-      const supabase = createClient();
-      if (!user?.id) {
-        setStatus({ kind: 'error', message: 'You need to be signed in to add a photo.' });
-        setLoading(false);
-        return;
-      }
-
-      const path = `${user.id}/${crypto.randomUUID()}`;
-      const { error: uploadError } = await supabase.storage
-        .from('entry-images')
-        .upload(path, file);
-      if (uploadError) {
-        setStatus({ kind: 'error', message: 'Image upload failed: ' + uploadError.message });
-        setLoading(false);
-        return;
-      }
-
-      imageUrl = supabase.storage.from('entry-images').getPublicUrl(path).data.publicUrl;
+    if (!file) {
+      setStatus({ kind: 'error', message: 'At least one photo is required (jpg, jpeg, png, or webp).' });
+      setLoading(false);
+      return;
     }
 
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setStatus({ kind: 'error', message: 'Photo must be JPG, JPEG, PNG, or WebP.' });
+      setLoading(false);
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5 MB
+    if (file.size > maxSize) {
+      setStatus({ kind: 'error', message: 'Photo must be under 5 MB.' });
+      setLoading(false);
+      return;
+    }
+
+    // --- Upload to Supabase Storage ---
+    let imageUrl = '';
+    const supabase = createClient();
+    if (!user?.id) {
+      setStatus({ kind: 'error', message: 'You need to be signed in to add a photo.' });
+      setLoading(false);
+      return;
+    }
+
+    const path = `${user.id}/${crypto.randomUUID()}`;
+    const { error: uploadError } = await supabase.storage
+      .from('entry-images')
+      .upload(path, file);
+    if (uploadError) {
+      setStatus({ kind: 'error', message: 'Image upload failed: ' + uploadError.message });
+      setLoading(false);
+      return;
+    }
+
+    imageUrl = supabase.storage.from('entry-images').getPublicUrl(path).data.publicUrl;
+
+    // --- Build form data ---
     const form = new FormData(formEl);
     form.set('image_url', imageUrl);
 
@@ -65,7 +82,7 @@ export default function EntryForm({ user }) {
       if (fileRef.current) fileRef.current.value = '';
       router.refresh();
     } else if (result?.conflict) {
-      // The stage number already exists — ask how to proceed.
+      // The stage already has an entry â€” ask how to proceed.
       setPending({ ...result, form, formEl });
     } else {
       setStatus({ kind: 'error', message: result?.error || 'Something went wrong.' });
@@ -116,15 +133,7 @@ export default function EntryForm({ user }) {
               disabled={loading}
               onClick={() => handleChoice('duplicate')}
             >
-              Add as a duplicate stage anyway
-            </button>
-            <button
-              type="button"
-              className="btn btn--ghost btn--small"
-              disabled={loading}
-              onClick={() => handleChoice('reorder')}
-            >
-              Reorder stages to fit this one
+              Add duplicate
             </button>
             <button
               type="button"
@@ -132,10 +141,9 @@ export default function EntryForm({ user }) {
               disabled={loading}
               onClick={() => {
                 setPending(null);
-                stageRef.current?.focus();
               }}
             >
-              Try another stage number
+              Choose another stage
             </button>
           </div>
         </div>
@@ -164,22 +172,26 @@ export default function EntryForm({ user }) {
             className="field__input"
             name="khmer_title"
             lang="km"
-            placeholder="ឈ្មោះជាភាសាខ្មែរ"
+            maxLength={80}
+            placeholder="ážˆáŸ’áž˜áŸ„áŸ‡áž‡áž¶áž—áž¶ážŸáž¶ážáŸ’áž˜áŸ‚ážš"
           />
         </div>
         <div className="field">
           <label className="field__label" htmlFor="entry-stage">
-          Stage <small>(optional)</small>
+            Stage <small>(required)</small>
           </label>
-          <input
+          <select
             id="entry-stage"
             className="field__input"
             name="stage"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            ref={stageRef}
-            placeholder="e.g. 2 → 02"
-          />
+            required
+          >
+            <option value="">â€” Select a stage â€”</option>
+            <option value="Silkworm">Silkworm</option>
+            <option value="Cocoon">Cocoon</option>
+            <option value="Thread">Thread</option>
+            <option value="Cloth">Cloth</option>
+          </select>
         </div>
       </div>
 
@@ -198,12 +210,14 @@ export default function EntryForm({ user }) {
 
       <div className="field">
         <label className="field__label" htmlFor="entry-source">
-          Source <small>(museum or origin)</small>
+          Source <small>(required â€” museum, farm, or origin credited)</small>
         </label>
         <input
           id="entry-source"
           className="field__input"
           name="source"
+          required
+          maxLength={100}
           placeholder="e.g. National Museum of Cambodia"
         />
       </div>
@@ -217,20 +231,21 @@ export default function EntryForm({ user }) {
         </div>
         <div className="field">
           <label className="field__label" htmlFor="entry-image">
-            Photo <small>(optional)</small>
+            Photo <small>(required â€” max 5 MB, JPG/PNG/WebP)</small>
           </label>
           <input
             id="entry-image"
-          className="field__input"
+            className="field__input"
             type="file"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.webp"
             ref={fileRef}
+            required
           />
         </div>
       </div>
 
       <button type="submit" className="btn btn--primary" disabled={loading}>
-        {loading ? 'Adding…' : 'Add to my collection'}
+        {loading ? 'Addingâ€¦' : 'Add to my collection'}
       </button>
     </form>
   );

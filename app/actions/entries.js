@@ -31,66 +31,75 @@ export async function createEntry(formData, options = {}) {
 
   const title = String(formData.get('title') || '').trim();
   if (!title) return { error: 'A title is required.' };
+  if (title.length > 80) return { error: 'Title must be 80 characters or fewer.' };
 
-  // Stage: digits only; single digits are zero-padded ("1" → "01").
+  // Source: required, max 100 characters.
+  const source = String(formData.get('source') || '').trim();
+  if (!source) return { error: 'A source (museum, farm, or origin) is required.' };
+  if (source.length > 100) return { error: 'Source must be 100 characters or fewer.' };
+
+  // Description: required, 300–400 characters.
+  const description = String(formData.get('description') || '').trim();
+  if (!description) return { error: 'A description is required.' };
+  if (description.length < 300) return { error: `Description must be at least 300 characters (yours is ${description.length}).` };
+  if (description.length > 400) return { error: `Description must be 400 characters or fewer (yours is ${description.length}).` };
+
+  // Image URL: required (set by EntryForm.js after client-side upload).
+  const image_url = String(formData.get('image_url') || '').trim();
+  if (!image_url) return { error: 'At least one photo is required. Upload an image below.' };
+
+  // Stage: must be one of the four lifecycle names (or empty, though empty won't
+  // pass the required checks).
   const rawStage = String(formData.get('stage') || '').trim();
+  const VALID_STAGES = ['Silkworm', 'Cocoon', 'Thread', 'Cloth'];
   let stage = '';
   if (rawStage) {
-    if (!/^\d+$/.test(rawStage)) {
-      return { error: 'Stage must be a whole number (digits only), e.g. 1 or 12.' };
+    if (!VALID_STAGES.includes(rawStage)) {
+      return { error: 'Stage must be one of: Silkworm, Cocoon, Thread, Cloth.' };
     }
-    stage = String(Number(rawStage)).padStart(2, '0');
+    stage = rawStage;
   }
 
   const slug = `${slugify(title)}-${crypto.randomUUID().slice(0, 6)}`;
 
-  // Duplicate check + optional reordering — only among the user's own
-  // form-created entries (not seed/Sprint 1 entries, even if claimed).
-  // Seed slugs are simple kebab-case; form-created slugs always end with
-  // a random 6-character suffix (e.g. "my-entry-a1b2c3").
+  // Duplicate check — only against the user's own form-created entries
+  // (is_seed = false). Seed entries keep their stage value regardless.
   if (stage && mode !== 'duplicate') {
     const { data: mine, error: fetchErr } = await supabaseHandle
       .from('entries')
-      .select('id, stage, title, slug')
+      .select('id, stage, title')
       .eq('user_id', user.id)
-      .not('stage', 'eq', '');
+      .eq('is_seed', false);
     if (fetchErr) return { error: fetchErr.message };
 
-    // Only entries the user actually created via the form have the UUID
-    // suffix — seed entries that were "claimed" are excluded from reorder.
-    const myEntries = (mine || []).filter(
-      (entry) => /-[a-z0-9]{6}$/.test(entry.slug),
-    );
-
-    const numbered = myEntries
-      .map((entry) => ({ ...entry, num: parseInt(entry.stage, 10) }))
-      .filter((entry) => !Number.isNaN(entry.num));
-
-    if (mode === 'reorder') {
-      // Push every existing stage >= the new one up by one, then insert below it.
-      const newNum = parseInt(stage, 10);
-      for (const entry of numbered) {
-        if (entry.num >= newNum) {
-          const { error: bumpErr } = await supabaseHandle
-            .from('entries')
-            .update({ stage: String(entry.num + 1).padStart(2, '0') })
-            .eq('id', entry.id);
-          if (bumpErr) return { error: bumpErr.message };
-        }
-      }
-    } else {
-      const clash = numbered.find((entry) => entry.stage === stage);
-      if (clash) {
-        return {
-          conflict: true,
-          existingStage: clash.stage,
-          existingTitle: clash.title,
-          existingStages: numbered
-            .map((entry) => ({ stage: entry.stage, title: entry.title }))
-            .sort((a, b) => parseInt(a.stage, 10) - parseInt(b.stage, 10)),
-        };
-      }
+    const clash = (mine || []).find((entry) => entry.stage === stage);
+    if (clash) {
+      return {
+        conflict: true,
+        existingStage: clash.stage,
+        existingTitle: clash.title,
+      };
     }
+  }
+
+  // Rate limit: max 10 entries per user per day (light abuse prevention).
+  const today = new Date().toISOString().slice(0, 10);
+  const { count: todayCount, error: countErr } = await supabaseHandle
+    .from('entries')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .gte('created_at', today);
+  if (!countErr && todayCount >= 10) {
+    return { error: 'You can add up to 10 entries per day. Come back tomorrow.' };
+  }
+
+  // Max total: 50 entries per user (sanity ceiling).
+  const { count: totalCount, error: totalErr } = await supabaseHandle
+    .from('entries')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id);
+  if (!totalErr && totalCount >= 50) {
+    return { error: 'You\'ve reached the maximum of 50 entries.' };
   }
 
   try {
@@ -99,12 +108,13 @@ export async function createEntry(formData, options = {}) {
       slug,
       title,
       khmer_title: String(formData.get('khmer_title') || '').trim(),
-      description: String(formData.get('description') || '').trim(),
+      description,
       place: String(formData.get('place') || '').trim(),
-      image_url: String(formData.get('image_url') || '').trim(),
+      image_url,
       stage,
       contributor: user.user_metadata?.display_name?.trim() || 'Anonymous collector',
-      source: String(formData.get('source') || '').trim(),
+      source,
+      is_seed: false,
     });
 
     if (error) return { error: error.message };

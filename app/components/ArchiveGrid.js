@@ -3,20 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import EntryCard from '../../components/EntryCard';
 
-/* Lifecycle stage ranges mapped to the stored stage codes */
-const STAGE_RANGES = {
-  Silkworm: ['01', '02'],
-  Cocoon: ['03', '04', '05'],
-  Thread: ['06', '07'],
-  Cloth: ['08'],
-};
-
-const STAGES = [
-  { num: 1, label: 'Silkworm' },
-  { num: 2, label: 'Cocoon' },
-  { num: 3, label: 'Thread' },
-  { num: 4, label: 'Cloth' },
-];
+const STAGES = ['Silkworm', 'Cocoon', 'Thread', 'Cloth'];
 
 /**
  * Reports whether the viewport currently matches a media query.
@@ -58,8 +45,7 @@ export default function ArchiveGrid({ entries }) {
     let filtered = entries;
 
     if (activeFilter) {
-      const validStages = STAGE_RANGES[activeFilter] || [];
-      filtered = filtered.filter((entry) => validStages.includes(entry.stage));
+      filtered = filtered.filter((entry) => entry.stage === activeFilter);
     }
 
     if (normalizedQuery) {
@@ -176,18 +162,17 @@ export default function ArchiveGrid({ entries }) {
 
       {/* ---- Stage strip: clickable lifecycle categories ---- */}
       <div className="stage-strip" role="tablist" aria-label="Silk lifecycle stages">
-        {STAGES.map((s) => {
-          const isActive = activeFilter === s.label;
+        {STAGES.map((stageName) => {
+          const isActive = activeFilter === stageName;
           return (
             <button
-              key={s.label}
+              key={stageName}
               className={`stage-item${isActive ? ' stage-item--active' : ''}`}
-              onClick={() => setActiveFilter(isActive ? null : s.label)}
+              onClick={() => setActiveFilter(isActive ? null : stageName)}
               role="tab"
               aria-selected={isActive}
             >
-              <span className="stage-item__num">{s.num}</span>
-              {s.label}
+              {stageName}
             </button>
           );
         })}
@@ -195,7 +180,7 @@ export default function ArchiveGrid({ entries }) {
 
       {/* ---- Filter chips below search ---- */}
       <div className="filters" role="group" aria-label="Filter by stage">
-        {['All', 'Silkworm', 'Cocoon', 'Thread', 'Cloth'].map((chip) => {
+        {['All', ...STAGES].map((chip) => {
           const isActive = (chip === 'All' && !activeFilter) || chip === activeFilter;
           return (
             <button
