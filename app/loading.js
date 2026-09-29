@@ -9,11 +9,9 @@ export default function Loading() {
           <div className="skeleton-box" style={{ width: '30rem', height: '1.2rem' }} />
         </div>
         <div className="skeleton-hero__collage">
-          <div className="skeleton-box skeleton-collage-tall" />
-          <div className="skeleton-collage-stack">
-            <div className="skeleton-box" style={{ flex: 1 }} />
-            <div className="skeleton-box" style={{ flex: 1 }} />
-          </div>
+          <div className="skeleton-box skeleton-collage-wide" />
+          <div className="skeleton-box skeleton-collage-tile" />
+          <div className="skeleton-box skeleton-collage-tile" />
         </div>
       </div>
 

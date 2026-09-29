@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import EntryCard from '../../components/EntryCard';
 
 /* Lifecycle stage ranges mapped to the stored stage codes */
@@ -17,6 +17,35 @@ const STAGES = [
   { num: 3, label: 'Thread' },
   { num: 4, label: 'Cloth' },
 ];
+
+/**
+ * Reports whether the viewport currently matches a media query.
+ * Uses window.matchMedia where available; otherwise falls back to a
+ * plain width check on resize. Lets us avoid rendering (and fetching)
+ * the hero collage images on small screens.
+ */
+function useMediaQuery(query, { minWidth } = {}) {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    if (typeof window.matchMedia === 'function') {
+      const mq = window.matchMedia(query);
+      const update = () => setMatches(mq.matches);
+      update();
+      mq.addEventListener('change', update);
+      return () => mq.removeEventListener('change', update);
+    }
+
+    const update = () => setMatches(window.innerWidth >= (minWidth || Infinity));
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [query, minWidth]);
+
+  return matches;
+}
 
 export default function ArchiveGrid({ entries }) {
   const [query, setQuery] = useState('');
@@ -60,6 +89,10 @@ export default function ArchiveGrid({ entries }) {
     const rest = unique.filter((e) => !prefer.includes(e));
     return [...prefer, ...rest].slice(0, 3);
   }, [entries]);
+
+  /* Render the collage only on screens wide enough to show it — the images
+     are not fetched on mobile at all (helps load time). */
+  const showCollage = useMediaQuery('(min-width: 769px)', { minWidth: 769 });
 
   const clearFilters = () => {
     setQuery('');
@@ -114,30 +147,28 @@ export default function ArchiveGrid({ entries }) {
           </div>
         </div>
 
-        {collageImages.length > 0 && (
+        {showCollage && collageImages.length > 0 && (
           <div className="hero__collage">
-            <div className="hero__collage-item hero__collage-tall">
+            <div className="hero__collage-item hero__collage-item--wide">
               <img
                 src={collageImages[0].image_url}
                 alt={collageImages[0].title || 'Cambodian silk archive — early lifecycle'}
                 loading="eager"
               />
             </div>
-            <div className="hero__collage-stack">
-              <div className="hero__collage-item">
-                <img
-                  src={(collageImages[1] || collageImages[0]).image_url}
-                  alt={collageImages[1]?.title || 'Silk production process'}
-                  loading="eager"
-                />
-              </div>
-              <div className="hero__collage-item">
-                <img
-                  src={(collageImages[2] || collageImages[0]).image_url}
-                  alt={collageImages[2]?.title || 'Golden silk thread'}
-                  loading="eager"
-                />
-              </div>
+            <div className="hero__collage-item">
+              <img
+                src={(collageImages[1] || collageImages[0]).image_url}
+                alt={collageImages[1]?.title || 'Silk production process'}
+                loading="eager"
+              />
+            </div>
+            <div className="hero__collage-item">
+              <img
+                src={(collageImages[2] || collageImages[0]).image_url}
+                alt={collageImages[2]?.title || 'Golden silk thread'}
+                loading="eager"
+              />
             </div>
           </div>
         )}
