@@ -44,17 +44,25 @@ export async function createEntry(formData, options = {}) {
 
   const slug = `${slugify(title)}-${crypto.randomUUID().slice(0, 6)}`;
 
-  // Duplicate check + optional reordering — only when a stage was given and
-  // the user hasn't already chosen to allow a duplicate.
+  // Duplicate check + optional reordering — only among the user's own
+  // form-created entries (not seed/Sprint 1 entries, even if claimed).
+  // Seed slugs are simple kebab-case; form-created slugs always end with
+  // a random 6-character suffix (e.g. "my-entry-a1b2c3").
   if (stage && mode !== 'duplicate') {
     const { data: mine, error: fetchErr } = await supabaseHandle
       .from('entries')
-      .select('id, stage, title')
+      .select('id, stage, title, slug')
       .eq('user_id', user.id)
       .not('stage', 'eq', '');
     if (fetchErr) return { error: fetchErr.message };
 
-    const numbered = (mine || [])
+    // Only entries the user actually created via the form have the UUID
+    // suffix — seed entries that were "claimed" are excluded from reorder.
+    const myEntries = (mine || []).filter(
+      (entry) => /-[a-z0-9]{6}$/.test(entry.slug),
+    );
+
+    const numbered = myEntries
       .map((entry) => ({ ...entry, num: parseInt(entry.stage, 10) }))
       .filter((entry) => !Number.isNaN(entry.num));
 

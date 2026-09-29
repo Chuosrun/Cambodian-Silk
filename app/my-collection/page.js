@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import EntryCard from '../../components/EntryCard';
 import EntryForm from './EntryForm';
-import { deleteEntry } from '../actions/entries';
+import DeleteButton from '../../components/DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,12 +69,7 @@ export default async function MyCollection() {
           {myEntries.map((entry) => (
             <div key={entry.id} className="collection__item">
               <EntryCard entry={entry} />
-              <form action={deleteEntry}>
-                <input type="hidden" name="slug" value={entry.slug} />
-                <button type="submit" className="btn btn--ghost btn--danger">
-                  Remove from my collection
-                </button>
-              </form>
+              <DeleteButton slug={entry.slug} />
             </div>
           ))}
         </section>
