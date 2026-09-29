@@ -1126,7 +1126,7 @@ textarea.field__input {
 /* ---- Responsive polish (mobile + small tablet) ---- */
 @media (max-width: 640px) {
   .page {
-    padding: 3.5rem 1.1rem 4.5rem;
+    padding: 3rem 1rem 4rem;
   }
 
   .site-header__inner {
@@ -1153,6 +1153,7 @@ textarea.field__input {
     overflow-x: auto;
     gap: 0.55rem;
     padding: 0.85rem 0.9rem;
+    margin: 0 0 0.75rem;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
   }
@@ -1160,6 +1161,17 @@ textarea.field__input {
   .stage-item {
     scroll-snap-align: start;
     flex-shrink: 0;
+  }
+
+  /* Tighter filter-to-grid gap on mobile */
+  .filters {
+    margin: 0 0 1rem;
+  }
+
+  /* Single-column cards on mobile */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   /* Footer stacks on mobile */
@@ -1171,5 +1183,13 @@ textarea.field__input {
 
   .site-footer__nav {
     gap: 1rem;
+  }
+}
+
+/* ----- Tablet: 2-column grid ----- */
+@media (min-width: 641px) and (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
 }
