@@ -31,7 +31,15 @@ where slug in (
   'drying-silk-yarn'
 );
 
--- 4) Stage check constraint — only valid lifecycle names are stored.
+-- 4) Catch-all: map any remaining numeric stages (from user-created entries
+--    that predate the migration) to their correct lifecycle name, so the
+--    check constraint below cannot fail on user data.
+update public.entries set stage = 'Silkworm' where stage in ('01', '02');
+update public.entries set stage = 'Cocoon'   where stage in ('03', '04', '05');
+update public.entries set stage = 'Thread'   where stage in ('06', '07');
+update public.entries set stage = 'Cloth'    where stage = '08';
+
+-- 5) Stage check constraint — only valid lifecycle names are stored.
 --    The app also validates, but this is the database-level guarantee.
 alter table public.entries
   drop constraint if exists entries_stage_check;
@@ -40,7 +48,7 @@ alter table public.entries
   add constraint entries_stage_check
   check (stage in ('Silkworm', 'Cocoon', 'Thread', 'Cloth', ''));
 
--- 5) Re-insert the missing seed entry (Boiling and Extraction).
+-- 6) Re-insert the missing seed entry (Boiling and Extraction).
 --    It was lost when a non-atomic reorder committed the stage bumps
 --    before the insert failed — the original Bug Zero.
 --    Stage = 'Thread' because boiling/extraction sits between harvest
@@ -57,8 +65,8 @@ select
   'Cocoons are submerged in boiling water over a charcoal or wood-fired stove. The heat softens the sericin gum, allowing the delicate fibres to be unwound, and prevents the pupa from cutting through the silk — a critical step between harvest and reeling.',
   'Cambodian Silk Archives',
   'Koh Dach',
-  '/images/06_Boiling_Cocoons_Pot.jpg',
-  '',
+  '',           -- ← image_url — replace after re-uploading the photo (original was /images/06_Boiling_Cocoons_Pot.jpg)
+  '',           -- ← source — fill in a museum or farm credit if you have one
   user_id,
   true
 from public.entries

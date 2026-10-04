@@ -127,6 +127,81 @@ export async function createEntry(formData, options = {}) {
   return { ok: true };
 }
 
+export async function updateEntry(formData) {
+
+  let user = null;
+  let supabaseHandle = null;
+
+  try {
+    supabaseHandle = await createClient();
+    const { data } = await supabaseHandle.auth.getUser();
+    user = data.user;
+  } catch (err) {
+    return { error: err.message || 'Could not connect.' };
+  }
+  if (!user) return { error: 'You need to be signed in.' };
+
+  const slug = String(formData.get('slug') || '').trim();
+  if (!slug) return { error: 'Missing entry.' };
+
+  // Validate fields (same rules as createEntry)
+  const title = String(formData.get('title') || '').trim();
+  if (!title) return { error: 'Title is required.' };
+  if (title.length > 80) return { error: 'Title must be 80 characters or fewer.' };
+
+  const source = String(formData.get('source') || '').trim();
+  if (!source) return { error: 'Source is required.' };
+  if (source.length > 100) return { error: 'Source must be 100 characters or fewer.' };
+
+  const description = String(formData.get('description') || '').trim();
+  if (!description) return { error: 'Description is required.' };
+  if (description.length < 300 || description.length > 400) {
+    return { error: 'Description must be between 300 and 400 characters.' };
+  }
+
+  const rawStage = String(formData.get('stage') || '').trim();
+  if (!rawStage) return { error: 'Stage is required.' };
+  const VALID_STAGES = ['Silkworm', 'Cocoon', 'Thread', 'Cloth'];
+  if (!VALID_STAGES.includes(rawStage)) return { error: 'Invalid stage value.' };
+
+  const payload = {
+    title,
+    khmer_title: String(formData.get('khmer_title') || '').trim(),
+    description,
+    source,
+    stage: rawStage,
+    place: String(formData.get('place') || '').trim(),
+  };
+
+  const imageUrl = String(formData.get('image_url') || '').trim();
+  if (imageUrl) payload.image_url = imageUrl;
+
+  try {
+    const { data: result, error } = await supabaseHandle
+      .from('entries')
+      .update(payload)
+      .eq('slug', slug)
+      .eq('user_id', user.id)
+      .select();
+
+    if (error) return { error: error.message };
+
+    // .select() returns the updated row; empty means RLS refused it
+    if (!result || result.length === 0) {
+      console.error('Update refused by RLS for slug:', slug, 'user:', user.id);
+      return { error: 'That change wasn\'t saved.' };
+    }
+
+    revalidatePath('/');
+    revalidatePath('/my-collection');
+    revalidatePath(`/entries/${slug}`);
+    return { ok: true, slug };
+  } catch (err) {
+    console.error('Update exception:', err);
+    return { error: 'That change wasn\'t saved.' };
+  }
+}
+
 export async function deleteEntry(formData) {
   let supabaseHandle = null;
   let user = null;
@@ -143,13 +218,21 @@ export async function deleteEntry(formData) {
   if (!slug) return { error: 'Missing entry.' };
 
   try {
-    const { error } = await supabaseHandle
+    const { data: result, error } = await supabaseHandle
       .from('entries')
       .delete()
       .eq('slug', slug)
-      .eq('user_id', user.id); // RLS enforces this too — belt and braces.
+      .eq('user_id', user.id)
+      .eq('is_seed', false) // seed entries can't be deleted through the UI
+      .select();
 
     if (error) return { error: error.message };
+
+    // .select() returns the deleted row(s); empty means RLS refused
+    if (!result || result.length === 0) {
+      console.error('Delete refused by RLS for slug:', slug, 'user:', user.id);
+      return { error: 'That change wasn\'t saved.' };
+    }
   } catch (err) {
     return { error: err.message || 'Something went wrong on the server.' };
   }

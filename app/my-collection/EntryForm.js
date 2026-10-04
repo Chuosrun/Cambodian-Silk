@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -60,7 +60,7 @@ export default function EntryForm({ user }) {
 
     const path = `${user.id}/${crypto.randomUUID()}`;
     const { error: uploadError } = await supabase.storage
-      .from('entry-images')
+      .from('photos')
       .upload(path, file);
     if (uploadError) {
       setStatus({ kind: 'error', message: 'Image upload failed: ' + uploadError.message });
@@ -68,7 +68,7 @@ export default function EntryForm({ user }) {
       return;
     }
 
-    imageUrl = supabase.storage.from('entry-images').getPublicUrl(path).data.publicUrl;
+    imageUrl = supabase.storage.from('photos').getPublicUrl(path).data.publicUrl;
 
     // --- Build form data ---
     const form = new FormData(formEl);
@@ -173,7 +173,7 @@ export default function EntryForm({ user }) {
             name="khmer_title"
             lang="km"
             maxLength={80}
-            placeholder="ážˆáŸ’áž˜áŸ„áŸ‡áž‡áž¶áž—áž¶ážŸáž¶ážáŸ’áž˜áŸ‚ážš"
+            placeholder="ឧ. ការចិញ្ចឹមដង្កូវនាង"
           />
         </div>
         <div className="field">

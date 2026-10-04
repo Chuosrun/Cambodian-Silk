@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
 import { getEntryBySlug } from '@/lib/data';
 import CoverImage from '@/components/CoverImage';
+import DeleteButton from '@/components/DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +14,7 @@ export default async function EntryPage({ params }) {
   if (!entry) notFound();
 
   const {
+    slug,
     stage,
     title,
     khmer_title,
@@ -20,13 +23,34 @@ export default async function EntryPage({ params }) {
     place,
     image_url,
     source,
+    user_id,
   } = entry;
+
+  // Check if the current user is the owner
+  let currentUser = null;
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    currentUser = data.user;
+  } catch {
+    currentUser = null;
+  }
+  const isOwner = currentUser && user_id === currentUser.id;
 
   return (
     <main className="page page--detail">
       <Link href="/" className="back">
         ← Back to archive
       </Link>
+
+      {isOwner && (
+        <div className="detail__actions">
+          <Link href={`/edit/${slug}`} className="btn">
+            Edit
+          </Link>
+          <DeleteButton slug={slug} />
+        </div>
+      )}
 
       <article className="detail">
         <div className="detail__media">

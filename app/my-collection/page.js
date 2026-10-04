@@ -42,9 +42,13 @@ export default async function MyCollection() {
 
   const STAGE_ORDER = { Silkworm: 1, Cocoon: 2, Thread: 3, Cloth: 4 };
 
-  // Keep the collection in lifecycle order.
+  // Keep the collection in lifecycle order, with a deterministic tiebreaker
+  // so entries at the same stage (e.g. both 'Thread') appear in slug order.
   myEntries.sort((a, b) => {
-    return (STAGE_ORDER[a.stage] || 0) - (STAGE_ORDER[b.stage] || 0);
+    const na = STAGE_ORDER[a.stage] || 0;
+    const nb = STAGE_ORDER[b.stage] || 0;
+    if (na !== nb) return na - nb;
+    return a.slug.localeCompare(b.slug);
   });
 
   return (

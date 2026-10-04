@@ -764,6 +764,26 @@ textarea.field__input {
   resize: vertical;
 }
 
+/* ---- Per-field validation errors ---- */
+.field__error {
+  margin: 0.4rem 0 0;
+  color: #b3541e;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+/* ---- Detail page owner actions ---- */
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.detail__actions .btn {
+  font-size: 0.85rem;
+}
+
 /* ============================================================
    Sprint 2 — auth pages
    ============================================================ */
