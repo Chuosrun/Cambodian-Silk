@@ -24,6 +24,7 @@ export default async function EntryPage({ params }) {
     image_url,
     source,
     user_id,
+    is_seed,
   } = entry;
 
   // Check if the current user is the owner
@@ -35,7 +36,7 @@ export default async function EntryPage({ params }) {
   } catch {
     currentUser = null;
   }
-  const isOwner = currentUser && user_id === currentUser.id;
+  const isOwner = currentUser && user_id === currentUser.id && !is_seed;
 
   return (
     <main className="page page--detail">

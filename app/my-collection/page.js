@@ -73,7 +73,7 @@ export default async function MyCollection() {
           {myEntries.map((entry) => (
             <div key={entry.id} className="collection__item">
               <EntryCard entry={entry} />
-              <DeleteButton slug={entry.slug} />
+              {!entry.is_seed && <DeleteButton slug={entry.slug} />}
             </div>
           ))}
         </section>
