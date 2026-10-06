@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,8 +22,8 @@ function validateField(name, value) {
       return null;
     case 'description':
       if (!trimmed) return 'Description is required.';
-      if (trimmed.length < 300) return `Description needs at least 300 characters (${trimmed.length} so far).`;
-      if (trimmed.length > 400) return 'Description must be 400 characters or fewer.';
+      const wc = trimmed.split(/\s+/).filter(Boolean).length;
+      if (wc > 300) return `Description must be 300 words or fewer (${wc} words).`;
       return null;
     case 'stage':
       if (!trimmed) return 'Stage is required.';
@@ -70,7 +70,7 @@ async function handleSubmit(event) {
       if (err) errors[field] = err;
     }
 
-    // File validation — required on create, optional on edit
+    // File validation â€” required on create, optional on edit
     const file = fileRef.current?.files?.[0];
     if (!file && !isEdit) {
       errors.image = 'At least one photo is required (JPG, PNG, or WebP).';
@@ -206,7 +206,7 @@ return (
 
       <div className="field">
         <label className="field__label" htmlFor="contribute-title">
-          Title <small>(required — 80 characters max)</small>
+          Title <small>(required â€” 80 characters max)</small>
         </label>
         <input
           id="contribute-title"
@@ -230,7 +230,7 @@ return (
             name="khmer_title"
             lang="km"
             defaultValue={entry?.khmer_title || ''}
-            placeholder="ឧ. ការចិញ្ចឹមដង្កូវនាង"
+            placeholder="áž§. áž€áž¶ážšáž…áž·áž‰áŸ’áž…áž¹áž˜ážŠáž„áŸ’áž€áž¼ážœáž“áž¶áž„"
           />
           {fieldErrors.khmer_title && <p className="field__error">{fieldErrors.khmer_title}</p>}
         </div>
@@ -239,7 +239,7 @@ return (
             Stage <small>(required)</small>
           </label>
           <select id="contribute-stage" className="field__input" name="stage" required>
-            <option value="">— Select a stage —</option>
+            <option value="">- Select a stage -</option>
             {VALID_STAGES.map((s) => (
               <option key={s} value={s} selected={entry?.stage === s}>{s}</option>
             ))}
@@ -250,7 +250,7 @@ return (
 
       <div className="field">
         <label className="field__label" htmlFor="contribute-description">
-          Description <small>(required — 300 to 400 characters)</small>
+          Description <small>(required â€” 300 words max)</small>
         </label>
         <textarea
           id="contribute-description"
@@ -265,7 +265,7 @@ return (
 
       <div className="field">
         <label className="field__label" htmlFor="contribute-source">
-          Source <small>(required — museum, farm, or origin credited)</small>
+          Source <small>(required - museum, farm, or origin credited)</small>
         </label>
         <input
           id="contribute-source"
@@ -289,7 +289,7 @@ return (
         </div>
         <div className="field">
           <label className="field__label" htmlFor="contribute-image">
-            Photo <small>{isEdit ? '(optional — leave empty to keep the current one)' : '(required — max 5 MB, JPG/PNG/WebP)'}</small>
+            Photo <small>{isEdit ? '(optional - leave empty to keep the current one)' : '(required - max 5 MB, JPG/PNG/WebP)'}</small>
           </label>
           <input id="contribute-image" className="field__input" type="file"
             accept=".jpg,.jpeg,.png,.webp" ref={fileRef} />
@@ -298,7 +298,7 @@ return (
       </div>
 
       <button type="submit" className="btn btn--primary" disabled={loading}>
-        {loading ? 'Saving…' : isEdit ? 'Save changes' : 'Add to archive'}
+        {loading ? 'Savingâ€¦' : isEdit ? 'Save changes' : 'Add to archive'}
       </button>
     </form>
   );
