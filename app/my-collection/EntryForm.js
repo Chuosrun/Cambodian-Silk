@@ -82,7 +82,7 @@ export default function EntryForm({ user }) {
       if (fileRef.current) fileRef.current.value = '';
       router.refresh();
     } else if (result?.conflict) {
-      // The stage already has an entry â€” ask how to proceed.
+      // The stage already has an entry - ask how to proceed.
       setPending({ ...result, form, formEl });
     } else {
       setStatus({ kind: 'error', message: result?.error || 'Something went wrong.' });
@@ -186,7 +186,7 @@ export default function EntryForm({ user }) {
             name="stage"
             required
           >
-            <option value="">â€” Select a stage â€”</option>
+            <option value="">- Select a stage -</option>
             <option value="Silkworm">Silkworm</option>
             <option value="Cocoon">Cocoon</option>
             <option value="Thread">Thread</option>
@@ -210,7 +210,7 @@ export default function EntryForm({ user }) {
 
       <div className="field">
         <label className="field__label" htmlFor="entry-source">
-          Source <small>(required â€” museum, farm, or origin credited)</small>
+          Source <small>(required - museum, farm, or origin credited)</small>
         </label>
         <input
           id="entry-source"
@@ -231,7 +231,7 @@ export default function EntryForm({ user }) {
         </div>
         <div className="field">
           <label className="field__label" htmlFor="entry-image">
-            Photo <small>(required â€” max 5 MB, JPG/PNG/WebP)</small>
+            Photo <small>(required - max 5 MB, JPG/PNG/WebP)</small>
           </label>
           <input
             id="entry-image"
@@ -245,7 +245,7 @@ export default function EntryForm({ user }) {
       </div>
 
       <button type="submit" className="btn btn--primary" disabled={loading}>
-        {loading ? 'Addingâ€¦' : 'Add to my collection'}
+        {loading ? 'Adding...' : 'Add to my collection'}
       </button>
     </form>
   );
