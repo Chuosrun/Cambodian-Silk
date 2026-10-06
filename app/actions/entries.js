@@ -38,11 +38,11 @@ export async function createEntry(formData, options = {}) {
   if (!source) return { error: 'A source (museum, farm, or origin) is required.' };
   if (source.length > 100) return { error: 'Source must be 100 characters or fewer.' };
 
-  // Description: required, 300–400 characters.
+  // Description: no minimum, max 300 words.
   const description = String(formData.get('description') || '').trim();
   if (!description) return { error: 'A description is required.' };
-  if (description.length < 300) return { error: `Description must be at least 300 characters (yours is ${description.length}).` };
-  if (description.length > 400) return { error: `Description must be 400 characters or fewer (yours is ${description.length}).` };
+  const wordCount = description.split(/\s+/).filter(Boolean).length;
+  if (wordCount > 300) return { error: `Description must be 300 words or fewer (yours has ${wordCount}).` };
 
   // Image URL: required (set by EntryForm.js after client-side upload).
   const image_url = String(formData.get('image_url') || '').trim();
@@ -155,8 +155,9 @@ export async function updateEntry(formData) {
 
   const description = String(formData.get('description') || '').trim();
   if (!description) return { error: 'Description is required.' };
-  if (description.length < 300 || description.length > 400) {
-    return { error: 'Description must be between 300 and 400 characters.' };
+  const wordCount = description.split(/\s+/).filter(Boolean).length;
+  if (wordCount > 300) {
+    return { error: 'Description must be 300 words or fewer.' };
   }
 
   const rawStage = String(formData.get('stage') || '').trim();

@@ -138,7 +138,7 @@ export default function ArchiveGrid({ entries }) {
             <div className="hero__collage-item hero__collage-item--wide">
               <img
                 src={collageImages[0].image_url}
-                alt={collageImages[0].title || 'Cambodian silk archive — early lifecycle'}
+                alt={collageImages[0].title || 'Cambodian silk archive - early lifecycle'}
                 loading="eager"
               />
             </div>

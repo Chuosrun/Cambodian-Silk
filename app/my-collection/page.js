@@ -56,7 +56,7 @@ export default async function MyCollection() {
       <h1 className="page__title">My collection</h1>
       <p className="page__lead">
         Everything you add lives here and in the public archive. You can add or remove your own
-        entries anytime — nobody else can touch them.
+        entries anytime - nobody else can touch them.
       </p>
 
       {dbError && (

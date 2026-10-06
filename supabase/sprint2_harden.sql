@@ -62,7 +62,7 @@ select
   'Thread',
   'Boiling and Extraction',
   'ការដាំសំបុកសូត្រ',
-  'Cocoons are submerged in boiling water over a charcoal or wood-fired stove. The heat softens the sericin gum, allowing the delicate fibres to be unwound, and prevents the pupa from cutting through the silk — a critical step between harvest and reeling.',
+  'Cocoons are submerged in boiling water over a charcoal or wood-fired stove. The heat softens the sericin gum, allowing the delicate fibres to be unwound, and prevents the pupa from cutting through the silk - a critical step between harvest and reeling.',
   'Cambodian Silk Archives',
   'Koh Dach',
   '',           -- ← image_url — replace after re-uploading the photo (original was /images/06_Boiling_Cocoons_Pot.jpg)

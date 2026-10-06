@@ -93,7 +93,7 @@ values
    'The hardened cocoons are manually plucked from their branches and gathered in baskets before the extraction process begins.',
    'Cambodian Silk Archives', 'Koh Oknha Tei', '/images/05_Harvested_Cocoons_Basket.jpg', '', true),
   ('boiling-cocoons', 'Thread', 'Boiling and Extraction', 'ការដាំសំបុកសូត្រ',
-   'Cocoons are submerged in boiling water over a charcoal or wood-fired stove. The heat softens the sericin gum, allowing the delicate fibres to be unwound, and prevents the pupa from cutting through the silk — a critical step between harvest and reeling.',
+   'Cocoons are submerged in boiling water over a charcoal or wood-fired stove. The heat softens the sericin gum, allowing the delicate fibres to be unwound, and prevents the pupa from cutting through the silk - a critical step between harvest and reeling.',
    'Cambodian Silk Archives', 'Koh Dach', '/images/06_Boiling_Cocoons_Pot.jpg', '', true),
   ('reeling-silk', 'Thread', 'Reeling the Silk', 'ការស្រាវសូត្រ',
    'A weaver catches loose filaments from the hot water, twists threads from dozens of cocoons together, and hand-reels the strand onto a wooden spinning wheel.',
