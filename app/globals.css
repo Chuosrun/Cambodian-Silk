@@ -1148,6 +1148,11 @@ textarea.field__input {
     flex-shrink: 0;
   }
 
+  /* Tighten letter-spacing on Khmer eyebrow text */
+  .hero__eyebrow {
+    letter-spacing: 0;
+  }
+
   /* Tighter filter-to-grid gap on mobile */
   .filters {
     margin: 0 0 1rem;
