@@ -77,7 +77,7 @@ export default function EntryForm({ user }) {
     const result = await doCreate(form, 'normal');
 
     if (result?.ok) {
-      setStatus({ kind: 'success', message: 'Entry added to your collection.' });
+      setStatus({ kind: 'success', message: 'Your entry has been submitted and is waiting for review. It will appear once it is published.' });
       formEl.reset();
       if (fileRef.current) fileRef.current.value = '';
       router.refresh();
@@ -99,7 +99,7 @@ export default function EntryForm({ user }) {
     const result = await doCreate(pending.form, mode);
 
     if (result?.ok) {
-      setStatus({ kind: 'success', message: 'Entry added to your collection.' });
+      setStatus({ kind: 'success', message: 'Your entry has been submitted and is waiting for review. It will appear once it is published.' });
       pending.formEl.reset();
       if (fileRef.current) fileRef.current.value = '';
       setPending(null);
