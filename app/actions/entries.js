@@ -177,6 +177,17 @@ export async function updateEntry(formData) {
   const imageUrl = String(formData.get('image_url') || '').trim();
   if (imageUrl) payload.image_url = imageUrl;
 
+  // An owner's edit sends the entry back to review, unless the editor is a
+  // reviewer (reviewers keep their own entries published).
+  try {
+    const { data: reviewer } = await supabaseHandle.rpc('is_reviewer');
+    if (!reviewer) payload.status = 'pending';
+  } catch (err) {
+    // Treat rpc failure as "not a reviewer" - the edit safely goes back to review.
+    console.error('is_reviewer rpc failed:', err);
+    payload.status = 'pending';
+  }
+
   try {
     const { data: result, error } = await supabaseHandle
       .from('entries')

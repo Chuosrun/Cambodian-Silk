@@ -38,6 +38,9 @@ export default async function SiteNav() {
               <Link href="/my-collection" className="nav__link">
                 My collection
               </Link>
+              <Link href="/my-entries" className="nav__link">
+                My entries
+              </Link>
               <form action={signOut}>
                 <button type="submit" className="nav__link">
                   Sign out

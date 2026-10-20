@@ -1,4 +1,4 @@
-﻿'use client';
+﻿﻿'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -47,6 +47,7 @@ export default function ContributeForm({ user, entry }) {
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
   const [conflict, setConflict] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const isEdit = Boolean(entry);
 
@@ -54,6 +55,7 @@ export default function ContributeForm({ user, entry }) {
     setFieldErrors({});
     setGeneralError(null);
     setConflict(null);
+    setSuccessMessage(null);
   }
 async function handleSubmit(event) {
     event.preventDefault();
@@ -143,12 +145,21 @@ async function handleSubmit(event) {
       }
 
       // Success
-      const resultSlug = result?.slug || entry?.slug;
-      if (resultSlug) {
-        router.push(`/entries/${resultSlug}`);
-      } else {
-        router.refresh();
-      }
+      setLoading(false);
+      setFieldErrors({});
+      setGeneralError(null);
+      setConflict(null);
+      setSuccessMessage({
+        en: isEdit
+          ? 'Your changes are saved. The entry is back under review and will appear in the archive once it is published.'
+          : 'Your entry has been submitted and is waiting for review. It will appear in the archive once it is published.',
+        km: isEdit
+          ? 'ការផ្លាស់ប្តូររបស់អ្នកត្រូវបានរក្សាទុក។ កំណត់ត្រាកំពុងរង់ចាំការត្រួតពិនិត្យ ហើយនឹងបង្ហាញនៅក្នុងបណ្ណសារបន្ទាប់ពីត្រូវបានបោះពុម្ពផ្សាយ។'
+          : 'កំណត់ត្រារបស់អ្នកត្រូវបានដាក់ស្នើ ហើយកំពុងរង់ចាំការត្រួតពិនិត្យ។ វានឹងបង្ហាញនៅក្នុងបណ្ណសារបន្ទាប់ពីត្រូវបានបោះពុម្ពផ្សាយ។',
+      });
+      form.reset();
+      if (fileRef.current) fileRef.current.value = '';
+      router.refresh();
     } catch (err) {
       console.error('Save exception:', err);
       setGeneralError('Something went wrong while saving. Please try again.');
@@ -185,6 +196,13 @@ return (
 
       {generalError && (
         <p className="notice notice--error">{generalError}</p>
+      )}
+
+      {successMessage && (
+        <div className="notice notice--success" role="status">
+          <p>{successMessage.en}</p>
+          <p lang="km">{successMessage.km}</p>
+        </div>
       )}
 
       {conflict && (
