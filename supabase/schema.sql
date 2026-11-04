@@ -59,10 +59,12 @@ on conflict (id) do nothing;
 create policy "entry_images_public_read" on storage.objects
   for select using (bucket_id = 'entry-images');
 
--- Only signed-in users can upload.
+-- Only signed-in users can upload into their own folder.
 create policy "entry_images_authenticated_upload" on storage.objects
   for insert with check (
-    bucket_id = 'entry-images' and auth.role() = 'authenticated'
+    bucket_id = 'entry-images'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = (select auth.uid()::text)
   );
 
 -- Owners can delete their own uploads (first path segment = user id).

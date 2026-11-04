@@ -6,7 +6,10 @@ function formatDate(value) {
   if (!value) return '';
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('en-GB', {
+  // Use Khmer locale when available; fall back to English.
+  // Intl.DateTimeFormat supports km-KH in modern browsers.
+  const locale = typeof navigator !== 'undefined' && navigator.language?.startsWith('km') ? 'km-KH' : 'en-GB';
+  return d.toLocaleDateString(locale, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',

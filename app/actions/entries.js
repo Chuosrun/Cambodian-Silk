@@ -89,7 +89,11 @@ export async function createEntry(formData, options = {}) {
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id)
     .gte('created_at', today);
-  if (!countErr && todayCount >= 10) {
+  if (countErr) {
+    console.error('Daily count query failed:', countErr);
+    return { error: 'Could not verify your daily limit. Please try again.' };
+  }
+  if (todayCount >= 10) {
     return { error: 'You can add up to 10 entries per day. Come back tomorrow.' };
   }
 
