@@ -9,31 +9,37 @@ const VALID_STAGES = ['Silkworm', 'Cocoon', 'Thread', 'Cloth'];
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE = 5 * 1024 * 1024;
 
+function msg(en, km) {
+  // Bilingual validation message — Khmer text should be verified by a native
+  // speaker before the archive reaches non-English contributors.
+  return { en, km };
+}
+
 function validateField(name, value) {
   const trimmed = (value || '').trim();
   switch (name) {
     case 'title':
-      if (!trimmed) return 'Title is required.';
-      if (trimmed.length > 80) return 'Title must be 80 characters or fewer.';
+      if (!trimmed) return msg('Title is required.', 'ចំងខ្ពតរដូឋនតមហាព.');
+      if (trimmed.length > 80) return msg('Title must be 80 characters or fewer.', 'ចំងខ្ពតរពដីខឋបពតមហាពមᮚ ៨០ ។');
       return null;
     case 'source':
-      if (!trimmed) return 'Source (museum, farm, or origin) is required.';
-      if (trimmed.length > 100) return 'Source must be 100 characters or fewer.';
+      if (!trimmed) return msg('Source (museum, farm, or origin) is required.', 'អឋដឋរហពថអណផឋវពណដ។');
+      if (trimmed.length > 100) return msg('Source must be 100 characters or fewer.', 'អឋដឋរពដីខឋបពតមហាពមᮚ ១០០ ។');
       return null;
     case 'description':
-      if (!trimmed) return 'Description is required.';
+      if (!trimmed) return msg('Description is required.', 'ពណនណកឋពណដ។');
       const wc = trimmed.split(/\s+/).filter(Boolean).length;
-      if (wc > 300) return `Description must be 300 words or fewer (${wc} words).`;
+      if (wc > 300) return msg(`Description must be 300 words or fewer (${wc} words).`, `ពណនណកឋពណដថពឧណដីខឋបពត ៣០០ (${wc} ថពឧណដ)។`);
       return null;
     case 'stage':
-      if (!trimmed) return 'Stage is required.';
-      if (!VALID_STAGES.includes(trimmed)) return 'Stage must be one of: Silkworm, Cocoon, Thread, Cloth.';
+      if (!trimmed) return msg('Stage is required.', 'បដឋឍហពតមហាព។');
+      if (!VALID_STAGES.includes(trimmed)) return msg('Stage must be one of: Silkworm, Cocoon, Thread, Cloth.', 'បដឋឍហពរពដីឋអថពតមហាព៌េៈ Silkworm, Cocoon, Thread, Cloth ។');
       return null;
     case 'khmer_title':
-      if (trimmed.length > 80) return 'Khmer title must be 80 characters or fewer.';
+      if (trimmed.length > 80) return msg('Khmer title must be 80 characters or fewer.', 'ចំងខ្ពតភឫឋពអ៊។');
       return null;
     case 'place':
-      if (trimmed.length > 80) return 'Place must be 80 characters or fewer.';
+      if (trimmed.length > 80) return msg('Place must be 80 characters or fewer.', 'ជដអឦឋ។');
       return null;
     default:
       return null;
@@ -234,7 +240,7 @@ return (
           placeholder="e.g. Feeding the silkworms"
           required
         />
-        {fieldErrors.title && <p className="field__error">{fieldErrors.title}</p>}
+        {fieldErrors.title && <p className="field__error">{fieldErrors.title.en}<br /><span lang="km">{fieldErrors.title.km}</span></p>}
       </div>
 
       <div className="entry-form__row">
@@ -250,7 +256,7 @@ return (
             defaultValue={entry?.khmer_title || ''}
             placeholder="áž§. áž€áž¶ážšáž…áž·áž‰áŸ’áž…áž¹áž˜ážŠáž„áŸ’áž€áž¼ážœáž“áž¶áž„"
           />
-          {fieldErrors.khmer_title && <p className="field__error">{fieldErrors.khmer_title}</p>}
+          {fieldErrors.khmer_title && <p className="field__error">{fieldErrors.khmer_title.en}<br /><span lang="km">{fieldErrors.khmer_title.km}</span></p>}
         </div>
         <div className="field">
           <label className="field__label" htmlFor="contribute-stage">
@@ -262,7 +268,7 @@ return (
               <option key={s} value={s} selected={entry?.stage === s}>{s}</option>
             ))}
           </select>
-          {fieldErrors.stage && <p className="field__error">{fieldErrors.stage}</p>}
+          {fieldErrors.stage && <p className="field__error">{fieldErrors.stage.en}<br /><span lang="km">{fieldErrors.stage.km}</span></p>}
         </div>
       </div>
 
@@ -278,7 +284,7 @@ return (
           defaultValue={entry?.description || ''}
           placeholder="Describe what you observed, documented, or learned at this stage."
         />
-        {fieldErrors.description && <p className="field__error">{fieldErrors.description}</p>}
+        {fieldErrors.description && <p className="field__error">{fieldErrors.description.en}<br /><span lang="km">{fieldErrors.description.km}</span></p>}
       </div>
 
       <div className="field">
@@ -293,7 +299,7 @@ return (
           placeholder="e.g. National Museum of Cambodia"
           required
         />
-        {fieldErrors.source && <p className="field__error">{fieldErrors.source}</p>}
+        {fieldErrors.source && <p className="field__error">{fieldErrors.source.en}<br /><span lang="km">{fieldErrors.source.km}</span></p>}
       </div>
 
       <div className="entry-form__row">
@@ -303,7 +309,7 @@ return (
           </label>
           <input id="contribute-place" className="field__input" name="place"
             defaultValue={entry?.place || ''} placeholder="e.g. Koh Dach" />
-          {fieldErrors.place && <p className="field__error">{fieldErrors.place}</p>}
+          {fieldErrors.place && <p className="field__error">{fieldErrors.place.en}<br /><span lang="km">{fieldErrors.place.km}</span></p>}
         </div>
         <div className="field">
           <label className="field__label" htmlFor="contribute-image">
@@ -311,7 +317,7 @@ return (
           </label>
           <input id="contribute-image" className="field__input" type="file"
             accept=".jpg,.jpeg,.png,.webp" ref={fileRef} />
-          {fieldErrors.image && <p className="field__error">{fieldErrors.image}</p>}
+          {fieldErrors.image && <p className="field__error">{fieldErrors.image.en ? fieldErrors.image.en : fieldErrors.image}<br /><span lang="km">{fieldErrors.image.km || ''}</span></p>}
         </div>
       </div>
 

@@ -38,6 +38,17 @@ export default async function EntryPage({ params }) {
   }
   const isOwner = currentUser && user_id === currentUser.id && !is_seed;
 
+  // Reviewers can delete anyone's non-seed entries.
+  let isReviewer = false;
+  if (currentUser) {
+    try {
+      const supabase = await createClient();
+      const { data: r } = await supabase.rpc('is_reviewer');
+      isReviewer = Boolean(r);
+    } catch { isReviewer = false; }
+  }
+  const canDelete = (isOwner || isReviewer) && !is_seed;
+
   return (
     <main className="page page--detail">
       <Link href="/" className="back">
@@ -49,6 +60,11 @@ export default async function EntryPage({ params }) {
           <Link href={`/edit/${slug}`} className="btn">
             Edit
           </Link>
+          <DeleteButton slug={slug} />
+        </div>
+      )}
+      {canDelete && !isOwner && (
+        <div className="detail__actions">
           <DeleteButton slug={slug} />
         </div>
       )}

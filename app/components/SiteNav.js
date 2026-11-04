@@ -4,6 +4,7 @@ import { signOut } from '../actions/auth';
 
 export default async function SiteNav() {
   let user = null;
+  let isReviewer = false;
 
   try {
     if (
@@ -13,9 +14,14 @@ export default async function SiteNav() {
       const supabase = await createClient();
       const { data } = await supabase.auth.getUser();
       user = data.user;
+      if (user) {
+        const { data: r } = await supabase.rpc('is_reviewer');
+        isReviewer = Boolean(r);
+      }
     }
   } catch {
     user = null; // Supabase not configured yet — show logged-out nav.
+    isReviewer = false;
   }
 
   return (
@@ -41,6 +47,11 @@ export default async function SiteNav() {
               <Link href="/my-entries" className="nav__link">
                 My entries
               </Link>
+              {isReviewer && (
+                <Link href="/review" className="nav__link">
+                  Review
+                </Link>
+              )}
               <form action={signOut}>
                 <button type="submit" className="nav__link">
                   Sign out

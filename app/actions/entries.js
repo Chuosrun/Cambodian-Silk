@@ -229,14 +229,27 @@ export async function deleteEntry(formData) {
   const slug = String(formData.get('slug') || '');
   if (!slug) return { error: 'Missing entry.' };
 
+  // Check if the caller is a reviewer — reviewers can delete anyone's entry.
+  let isRev = false;
   try {
-    const { data: result, error } = await supabaseHandle
+    const { data: r } = await supabaseHandle.rpc('is_reviewer');
+    isRev = Boolean(r);
+  } catch { isRev = false; }
+
+  try {
+    let query = supabaseHandle
       .from('entries')
       .delete()
       .eq('slug', slug)
-      .eq('user_id', user.id)
       .eq('is_seed', false) // seed entries can't be deleted through the UI
       .select();
+
+    // Owners can delete their own; reviewers can delete anyone's.
+    if (!isRev) {
+      query = query.eq('user_id', user.id);
+    }
+
+    const { data: result, error } = await query;
 
     if (error) return { error: error.message };
 

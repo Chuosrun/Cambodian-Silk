@@ -42,7 +42,7 @@ export default function EntryCard({ entry }) {
 
         <div className={styles.content}>
           <div className={styles.kicker}>
-            {stage && <span className={styles.stage}>STAGE {stage.toUpperCase()}</span>}
+            {stage && <span className={styles.stage}>{stage.toUpperCase()}</span>}
             {dateLabel && <span className={styles.date}>{dateLabel}</span>}
           </div>
 
