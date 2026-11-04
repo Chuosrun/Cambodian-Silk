@@ -35,6 +35,9 @@ export default async function SiteNav() {
           <Link href="/" className="nav__link">
             Archive
           </Link>
+          <Link href="/products" className="nav__link">
+            Products
+          </Link>
 
           {user ? (
             <>
