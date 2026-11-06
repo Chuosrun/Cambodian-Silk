@@ -2,6 +2,9 @@
 -- Cambodian Silk Archives — Sprint 2 database setup
 -- Paste this whole file into Supabase → SQL Editor → Run.
 -- It is idempotent: safe to run more than once.
+--
+-- Sprint 3 database setup: policies and moderation objects are superseded by
+-- sprint3_moderation.sql - run it after this file.
 -- ============================================================
 
 -- 1) Enable UUID generation
