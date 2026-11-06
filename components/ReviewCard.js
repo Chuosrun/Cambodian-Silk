@@ -76,6 +76,7 @@ export default function ReviewCard({ entry }) {
           onClick={async () => {
             const form = new FormData();
             form.set('slug', entry.slug);
+            form.set('return_to', '/review');
             const result = await deleteEntry(form);
             if (result?.error) {
               setMessage({ kind: 'error', text: result.error });

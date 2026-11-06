@@ -7,6 +7,17 @@ import DeleteButton from '@/components/DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
+// Non-published entries are only visible to their owner and reviewers (RLS);
+// keep them out of search engines.
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const entry = await getEntryBySlug(id);
+  if (entry && entry.status !== 'published') {
+    return { robots: { index: false, follow: false } };
+  }
+  return {};
+}
+
 export default async function EntryPage({ params }) {
   const { id } = await params;
   const entry = await getEntryBySlug(id);
@@ -25,12 +36,14 @@ export default async function EntryPage({ params }) {
     source,
     user_id,
     is_seed,
+    status,
   } = entry;
 
   // Check if the current user is the owner
   let currentUser = null;
+  let supabase = null;
   try {
-    const supabase = await createClient();
+    supabase = await createClient();
     const { data } = await supabase.auth.getUser();
     currentUser = data.user;
   } catch {
@@ -40,9 +53,8 @@ export default async function EntryPage({ params }) {
 
   // Reviewers can delete anyone's non-seed entries.
   let isReviewer = false;
-  if (currentUser) {
+  if (currentUser && supabase) {
     try {
-      const supabase = await createClient();
       const { data: r } = await supabase.rpc('is_reviewer');
       isReviewer = Boolean(r);
     } catch { isReviewer = false; }
@@ -54,6 +66,17 @@ export default async function EntryPage({ params }) {
       <Link href="/" className="back">
         ← Back to archive
       </Link>
+
+      {status === 'pending' && (
+        <p className="notice">
+          Pending review. Only you and reviewers can see this entry.
+        </p>
+      )}
+      {status === 'returned' && (
+        <p className="notice">
+          Returned by a reviewer. Only you and reviewers can see this entry.
+        </p>
+      )}
 
       {isOwner && (
         <div className="detail__actions">

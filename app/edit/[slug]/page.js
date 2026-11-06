@@ -24,6 +24,18 @@ export default async function EditPage({ params }) {
   const entry = await getEntryBySlug(slug);
   if (!entry) notFound();
 
+  // Original archive (seed) entries are read-only.
+  if (entry.is_seed) {
+    return (
+      <main className="page page--auth">
+        <p className="notice notice--error">
+          Original archive entries cannot be edited.
+        </p>
+        <a href="/" className="back">&larr; Back to archive</a>
+      </main>
+    );
+  }
+
   // Only the owner can edit
   if (entry.user_id !== user.id) {
     return (

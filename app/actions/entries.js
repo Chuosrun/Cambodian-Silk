@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { safeNext } from '@/lib/safe-redirect';
 
 function slugify(text) {
   return text
@@ -43,6 +44,15 @@ export async function createEntry(formData, options = {}) {
   if (!description) return { error: 'A description is required.' };
   const wordCount = description.split(/\s+/).filter(Boolean).length;
   if (wordCount > 300) return { error: `Description must be 300 words or fewer (yours has ${wordCount}).` };
+  // The database also caps description at 2000 characters (Khmer has no spaces,
+  // so the word count alone is not enough).
+  if (description.length > 2000) return { error: 'Description must be 2000 characters or fewer.' };
+
+  // Khmer title and place: optional, max 80 characters each (matches DB constraints).
+  const khmer_title = String(formData.get('khmer_title') || '').trim();
+  if (khmer_title.length > 80) return { error: 'Khmer title must be 80 characters or fewer.' };
+  const place = String(formData.get('place') || '').trim();
+  if (place.length > 80) return { error: 'Place must be 80 characters or fewer.' };
 
   // Image URL: required (set by EntryForm.js after client-side upload).
   const image_url = String(formData.get('image_url') || '').trim();
@@ -102,7 +112,11 @@ export async function createEntry(formData, options = {}) {
     .from('entries')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id);
-  if (!totalErr && totalCount >= 50) {
+  if (totalErr) {
+    console.error('Total count query failed:', totalErr);
+    return { error: 'Could not verify your entry limit. Please try again.' };
+  }
+  if (totalCount >= 50) {
     return { error: 'You\'ve reached the maximum of 50 entries.' };
   }
 
@@ -111,17 +125,21 @@ export async function createEntry(formData, options = {}) {
       user_id: user.id,
       slug,
       title,
-      khmer_title: String(formData.get('khmer_title') || '').trim(),
+      khmer_title,
       description,
-      place: String(formData.get('place') || '').trim(),
+      place,
       image_url,
       stage,
       contributor: user.user_metadata?.display_name?.trim() || 'Anonymous collector',
       source,
       is_seed: false,
+      status: 'pending',
     });
 
-    if (error) return { error: error.message };
+    if (error) {
+      console.error('Create entry failed:', error);
+      return { error: 'That change wasn\'t saved.' };
+    }
   } catch (err) {
     return { error: err.message || 'Something went wrong on the server.' };
   }
@@ -163,6 +181,14 @@ export async function updateEntry(formData) {
   if (wordCount > 300) {
     return { error: 'Description must be 300 words or fewer.' };
   }
+  if (description.length > 2000) {
+    return { error: 'Description must be 2000 characters or fewer.' };
+  }
+
+  const khmer_title = String(formData.get('khmer_title') || '').trim();
+  if (khmer_title.length > 80) return { error: 'Khmer title must be 80 characters or fewer.' };
+  const place = String(formData.get('place') || '').trim();
+  if (place.length > 80) return { error: 'Place must be 80 characters or fewer.' };
 
   const rawStage = String(formData.get('stage') || '').trim();
   if (!rawStage) return { error: 'Stage is required.' };
@@ -171,11 +197,11 @@ export async function updateEntry(formData) {
 
   const payload = {
     title,
-    khmer_title: String(formData.get('khmer_title') || '').trim(),
+    khmer_title,
     description,
     source,
     stage: rawStage,
-    place: String(formData.get('place') || '').trim(),
+    place,
   };
 
   const imageUrl = String(formData.get('image_url') || '').trim();
@@ -198,9 +224,13 @@ export async function updateEntry(formData) {
       .update(payload)
       .eq('slug', slug)
       .eq('user_id', user.id)
+      .eq('is_seed', false) // seed entries are read-only
       .select();
 
-    if (error) return { error: error.message };
+    if (error) {
+      console.error('Update entry failed:', error);
+      return { error: 'That change wasn\'t saved.' };
+    }
 
     // .select() returns the updated row; empty means RLS refused it
     if (!result || result.length === 0) {
@@ -210,6 +240,8 @@ export async function updateEntry(formData) {
 
     revalidatePath('/');
     revalidatePath('/my-collection');
+    revalidatePath('/products');
+    revalidatePath('/my-entries');
     revalidatePath(`/entries/${slug}`);
     return { ok: true, slug };
   } catch (err) {
@@ -232,6 +264,9 @@ export async function deleteEntry(formData) {
 
   const slug = String(formData.get('slug') || '');
   if (!slug) return { error: 'Missing entry.' };
+
+  // Where to go after a successful delete (same-origin paths only).
+  const returnTo = safeNext(String(formData.get('return_to') || ''), '/my-collection');
 
   // Check if the caller is a reviewer — reviewers can delete anyone's entry.
   let isRev = false;
@@ -268,5 +303,8 @@ export async function deleteEntry(formData) {
 
   revalidatePath('/');
   revalidatePath('/my-collection');
-  redirect('/my-collection');
+  revalidatePath('/review');
+  revalidatePath('/products');
+  revalidatePath('/my-entries');
+  redirect(returnTo);
 }
