@@ -19,27 +19,27 @@ function validateField(name, value) {
   const trimmed = (value || '').trim();
   switch (name) {
     case 'title':
-      if (!trimmed) return msg('Title is required.', 'ចំងខ្ពតរដូឋនតមហាព.');
-      if (trimmed.length > 80) return msg('Title must be 80 characters or fewer.', 'ចំងខ្ពតរពដីខឋបពតមហាពមᮚ ៨០ ។');
+      if (!trimmed) return msg('Title is required.', 'ត្រូវការចំណងជើង។');
+      if (trimmed.length > 80) return msg('Title must be 80 characters or fewer.', 'ចំណងជើងត្រូវមានមិនលើសពី ៨០ តួអក្សរ។');
       return null;
     case 'source':
-      if (!trimmed) return msg('Source (museum, farm, or origin) is required.', 'អឋដឋរហពថអណផឋវពណដ។');
-      if (trimmed.length > 100) return msg('Source must be 100 characters or fewer.', 'អឋដឋរពដីខឋបពតមហាពមᮚ ១០០ ។');
+      if (!trimmed) return msg('Source (museum, farm, or origin) is required.', 'ត្រូវការប្រភព (សារមន្ទីរ កសិដ្ឋាន ឬប្រភពដើម)។');
+      if (trimmed.length > 100) return msg('Source must be 100 characters or fewer.', 'ប្រភពត្រូវមានមិនលើសពី ១០០ តួអក្សរ។');
       return null;
     case 'description':
-      if (!trimmed) return msg('Description is required.', 'ពណនណកឋពណដ។');
+      if (!trimmed) return msg('Description is required.', 'ត្រូវការការពិពណ៌នា។');
       const wc = trimmed.split(/\s+/).filter(Boolean).length;
-      if (wc > 300) return msg(`Description must be 300 words or fewer (${wc} words).`, `ពណនណកឋពណដថពឧណដីខឋបពត ៣០០ (${wc} ថពឧណដ)។`);
+      if (wc > 300) return msg(`Description must be 300 words or fewer (${wc} words).`, `ការពិពណ៌នាត្រូវមានមិនលើសពី ៣០០ ពាក្យ (${wc} ពាក្យ)។`);
       return null;
     case 'stage':
-      if (!trimmed) return msg('Stage is required.', 'បដឋឍហពតមហាព។');
-      if (!VALID_STAGES.includes(trimmed)) return msg('Stage must be one of: Silkworm, Cocoon, Thread, Cloth.', 'បដឋឍហពរពដីឋអថពតមហាព៌េៈ Silkworm, Cocoon, Thread, Cloth ។');
+      if (!trimmed) return msg('Stage is required.', 'ត្រូវជ្រើសរើសដំណាក់កាល។');
+      if (!VALID_STAGES.includes(trimmed)) return msg('Stage must be one of: Silkworm, Cocoon, Thread, Cloth.', 'ដំណាក់កាលត្រូវតែជាមួយក្នុងចំណោម៖ Silkworm, Cocoon, Thread ឬ Cloth។');
       return null;
     case 'khmer_title':
-      if (trimmed.length > 80) return msg('Khmer title must be 80 characters or fewer.', 'ចំងខ្ពតភឫឋពអ៊។');
+      if (trimmed.length > 80) return msg('Khmer title must be 80 characters or fewer.', 'ចំណងជើងជាភាសាខ្មែរត្រូវមានមិនលើសពី ៨០ តួអក្សរ។');
       return null;
     case 'place':
-      if (trimmed.length > 80) return msg('Place must be 80 characters or fewer.', 'ជដអឦឋ។');
+      if (trimmed.length > 80) return msg('Place must be 80 characters or fewer.', 'ទីកន្លែងត្រូវមានមិនលើសពី ៨០ តួអក្សរ។');
       return null;
     default:
       return null;
