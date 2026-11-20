@@ -34,7 +34,7 @@ function useMediaQuery(query, { minWidth } = {}) {
   return matches;
 }
 
-export default function ArchiveGrid({ entries }) {
+export default function ArchiveGrid({ entries, children }) {
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState(null); // null = 'All'
 
@@ -160,22 +160,11 @@ export default function ArchiveGrid({ entries }) {
         )}
       </header>
 
-      {/* ---- Stage strip: clickable lifecycle categories ---- */}
-      <div className="stage-strip" role="tablist" aria-label="Silk lifecycle stages">
-        {STAGES.map((stageName) => {
-          const isActive = activeFilter === stageName;
-          return (
-            <button
-              key={stageName}
-              className={`stage-item${isActive ? ' stage-item--active' : ''}`}
-              onClick={() => setActiveFilter(isActive ? null : stageName)}
-              role="tab"
-              aria-selected={isActive}
-            >
-              {stageName}
-            </button>
-          );
-        })}
+      {/* ---- Jump link: scrolls down to the Silk Products showcase on this page ---- */}
+      <div className="filters filters--jump">
+        <a href="#silk-products" className="filter-chip filter-chip--link">
+          Products
+        </a>
       </div>
 
       {/* ---- Filter chips below search ---- */}
@@ -213,6 +202,9 @@ export default function ArchiveGrid({ entries }) {
           )}
         </div>
       )}
+
+      {/* Server-rendered extras (e.g. the Silk Products showcase) go below the grid. */}
+      {children}
     </main>
   );
 }

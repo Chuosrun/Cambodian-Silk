@@ -1,26 +1,10 @@
-import { createClient } from '@/lib/supabase/server';
+import { getPublishedProducts } from '@/lib/data';
 import EntryCard from '@/components/EntryCard';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProductsPage() {
-  let products = [];
-  let dbError = null;
-
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('entries')
-      .select('*')
-      .eq('is_seed', false)
-      .eq('status', 'published')
-      .order('created_at', { ascending: false });
-
-    if (error) throw new Error(error.message);
-    products = data || [];
-  } catch (err) {
-    dbError = err.message;
-  }
+  const { products, error: dbError } = await getPublishedProducts();
 
   return (
     <main className="page">

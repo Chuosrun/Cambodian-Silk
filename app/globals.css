@@ -170,68 +170,6 @@ img {
   }
 }
 
-/* ---- Stage strip (transformation story) ---- */
-.stage-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 0 0 1.25rem;
-  padding: 1rem 1.1rem;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: var(--shadow-soft);
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.stage-strip::-webkit-scrollbar {
-  display: none;
-}
-
-.stage-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.85rem;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 200ms ease;
-  white-space: nowrap;
-}
-
-.stage-item:hover {
-  border-color: rgba(184, 134, 11, 0.25);
-  color: var(--ink-strong);
-}
-
-.stage-item:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
-
-.stage-item--active {
-  background: var(--gold-pale);
-  border-color: rgba(184, 134, 11, 0.35);
-  color: var(--gold-deep);
-}
-
-.stage-item__num {
-  font-weight: 700;
-  color: var(--gold);
-  font-size: 0.9rem;
-}
-
-.stage-item--active .stage-item__num {
-  color: var(--gold-deep);
-}
-
 /* ---- Filter chips ---- */
 .filters {
   display: flex;
@@ -273,6 +211,29 @@ img {
   background: var(--gold-deep);
   border-color: var(--gold-deep);
   color: #fff;
+}
+
+/* "Products" jump link: a chip that is an <a>, so it needs link resets. */
+.filter-chip--link {
+  display: inline-block;
+  text-decoration: none;
+  border-color: rgba(184, 134, 11, 0.4);
+  color: var(--gold-deep);
+}
+
+.filter-chip--link:hover {
+  background: var(--gold-pale);
+}
+
+.filters--jump {
+  margin-bottom: 0.6rem;
+}
+
+/* Smooth jump to the showcase, unless the visitor asks for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 /* ---- Nav link hover & focus ---- */
@@ -1198,22 +1159,6 @@ textarea.field__input {
   .nav__email {
     max-width: 10rem;
     font-size: 0.72rem;
-  }
-
-  /* Stage strip scrolls horizontally on small screens */
-  .stage-strip {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 0.55rem;
-    padding: 0.85rem 0.9rem;
-    margin: 0 0 0.75rem;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-  }
-
-  .stage-item {
-    scroll-snap-align: start;
-    flex-shrink: 0;
   }
 
   /* Tighten letter-spacing on Khmer eyebrow text */
