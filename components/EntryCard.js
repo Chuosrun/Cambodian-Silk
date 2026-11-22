@@ -27,6 +27,7 @@ export default function EntryCard({ entry }) {
     place,
     image_url,
     source,
+    is_seed,
     created_at,
   } = entry || {};
 
@@ -45,7 +46,7 @@ export default function EntryCard({ entry }) {
 
         <div className={styles.content}>
           <div className={styles.kicker}>
-            {stage && <span className={styles.stage}>{stage.toUpperCase()}</span>}
+            {is_seed && stage && <span className={styles.stage}>{stage.toUpperCase()}</span>}
             {dateLabel && <span className={styles.date}>{dateLabel}</span>}
           </div>
 
