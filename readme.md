@@ -69,7 +69,7 @@ All AI work went through Cline in VS Code. **DeepSeek V4 Flash** wrote the code 
 | DeepSeek V4 Flash | Visual design pass and responsive grid | Kept. I adjusted spacing and the mobile grid after testing at 375px. |
 | DeepSeek V4 Flash | Contribution form, edit and delete, review queue | Kept. Edits and deletes check that a row came back, because RLS refusals report success with zero rows. |
 | DeepSeek V4 Flash | Bilingual validation messages | **Rewrote.** The first Khmer strings were garbled characters (commit `95ae035`). I caught it by reading them. They still need a native speaker. |
-| DeepSeek V4 Flash | Corrupted characters (em dashes saved as mojibake) | Kept, after three fix commits replaced em dashes with plain hyphens. |
+| DeepSeek V4 Flash | Corrupted characters (em dashes and "..." saved as mojibake) | Kept, after fix commits. Three replaced em dashes with plain hyphens, and on 22 Nov I saw the edit form's "Saving..." button show garbled letters by clicking Save myself. Commit `5554d6c` fixed that and three similar spots in the same file. |
 | DeepSeek V4 Flash | First architecture briefing | **Partly wrong.** It said anyone could read pending entries and self-publish. I checked the live policies, found both were already blocked, and recorded the corrections in `ARCHITECTURE.md`. It was right about other gaps (seed rows editable, open redirects, `reviewers` privileges), which I fixed in `sprint3_moderation.sql`. |
 | DeepSeek V4 Flash | Review of three findings from a partner | All three real and fixed (commit `f7d1d30`): the entry-limit check failed open, the upload policy was not scoped to the user's folder, and dates were hard-coded to one locale. |
 | Claude Sonnet 5.5 | Security and audit review of the whole site | FILL IN: two or three things it found, and what I did about each. |
@@ -81,7 +81,7 @@ All AI work went through Cline in VS Code. **DeepSeek V4 Flash** wrote the code 
 - **The 8 original entries** are credited on every card to contributor **Chuosrun Lim**, source **Silk Island Cambodia (Koh Dach)**. Their subject matter comes from silkworm farmers and mulberry cultivators on Koh Oknha Tei and Koh Dach.
 - **Photos** in `public/images/`: I (Chuosrun Lim) took all of these photos at Silk Island Cambodia (Koh Dach).
 - **Gap:** "Young Silkworms Feeding" and "The Feeding Cycle" share one photo (`01_Young_Silkworms_Feeding.jpg`). One needs its own.
-- **Contributor entries** show the account display name and the source typed on the form (required). The two products on the shelf are credited to "Prey Kabbas Weavers Cooperative" and "National Museum of Cambodia".
+- **Contributor entries** show the account display name and the source typed on the form (required). The three products on the shelf are credited to "Prey Kabbas Weavers Cooperative", "National Museum of Cambodia" and the Institute for Khmer Traditional Textiles (IKTT). The contributor name shown on them is the display name of the account that submitted them.
 
 ## 7. Running it locally
 
@@ -105,19 +105,19 @@ In the Supabase SQL Editor, run in order: `supabase/schema.sql`, `add_source_col
 
 ## 8. Submission checklist
 
-- Live URL loads logged out and shows published entries only: yes, re-checked 22 Nov 2026. It shows the 8 original entries and 2 published products.
+- Live URL loads logged out and shows published entries only: yes, re-checked 22 Nov 2026. It shows the 8 original entries and 3 published products.
 - A stranger cannot publish their own entry through the page or the console: yes, tested from a second account in Lab 10 (20 Nov 2026).
 - Logged out, the API returns nothing pending or returned: yes, re-checked 22 Nov 2026 with the publishable key only. A read of non-published entries returned 0 rows, a read of `reviewers` was refused (401), and a call to `review_entry` was refused (401).
 - Contributors can edit and delete only their own entries: yes (reviewers can also delete non-original entries, but not edit them).
 - No secrets in the repo history: yes, `.env.local` is gitignored and was never committed. `git log origin/main -G "sb_secret_|eyJ[A-Za-z0-9_-]{20,}\."` finds no commits (22 Nov 2026). The only env file in history is `.env.local.example`, which holds placeholders.
-- At least eight real entries, each with a credited source: yes. All 8 original entries show source "Silk Island Cambodia (Koh Dach)" and contributor "Chuosrun Lim". Two photos are duplicated (see section 6).
+- At least eight real entries, each with a credited source: yes. All 8 original entries show source "Silk Island Cambodia (Koh Dach)" and contributor "Chuosrun Lim". One photo is shared by two of them (see section 6).
 - Khmer renders on every screen a user meets, including the queue: **no.** Entries, the contribution form, status labels and the submit message have Khmer. The navigation, login, signup, footer and `/review` do not.
 - Works at phone width: yes, tested at 375px.
 - No test entries, lorem ipsum or TODO comments in shipped pages: no TODO or lorem ipsum in the code (searched `app/`, `components/`, `lib/`). FILL IN: check `/review` and `/my-collection` for leftover test entries and say what you found.
 - No console errors on the main pages: FILL IN
 - jesseorndorff is a collaborator on this repo: **invitation sent but not accepted yet** (22 Nov 2026). FILL IN once accepted.
 - Supabase project restored and awake on: awake on 22 Nov 2026 (the live API answered).
-- Demo video link opens in a private window: FILL IN (link)
+- Demo video link opens in a private window: https://youtu.be/YKCUR8bgLwo (uploaded 22 Nov 2026; the page loads logged out)
 - Reflection pasted in the Canvas submission: FILL IN
 - Posted in the Show Your Archive discussion: FILL IN
 - Q&A slot booked for: Dec 1, 9:50 AM
