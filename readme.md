@@ -13,7 +13,7 @@ An archive of the lifecycle of Tromol Meas, Cambodia's rare golden raw silk, dra
 
 People in Cambodia who want to see, and add to, the record of how their own silk is made: farmers, weavers, and their students and relatives.
 
-- **Khmer first.** Every original entry has a Khmer title. Form errors, the "waiting for review" message and the status labels on `/my-entries` are bilingual.
+- **Khmer first.** Every original entry has a Khmer title. Form errors, the "waiting for review" message and the status labels on `/my-collection` are bilingual.
 - **Phones first.** Layout breakpoints at 560px, 640px, 768px and 900px, tested at 375px. The hero photo collage is not rendered on phones, so those images are never downloaded on a slow connection.
 - **No name rules.** There is no first-name/last-name split. The credit is the account's display name, or "Anonymous collector" if none is set.
 - **Photos capped.** JPG, PNG or WebP, 5 MB, checked in the form.
@@ -36,9 +36,9 @@ People in Cambodia who want to see, and add to, the record of how their own silk
 | `/` | The 8 original entries, with search and stage filters, and a preview of up to 3 published products below the grid (a "Products" button jumps to it) |
 | `/products` | All published contributor entries |
 | `/entries/[id]` | One entry (Edit and Delete for its owner) |
-| `/contribute`, `/my-collection` | Add an entry with a photo |
+| `/my-collection` | Your entries with their review status, Edit and Delete, and the form to add a new one. Once you have entries, a big "Add Your Collection" button at the top jumps to the form at the bottom. |
+| `/contribute` | Add an entry with a photo (the same form that Edit uses) |
 | `/edit/[slug]` | Edit your own entry |
-| `/my-entries` | Your entries and their review status |
 | `/review` | Reviewer queue: Publish, Return, Delete. Others get a 404. |
 
 Photos upload from the browser to the `photos` bucket. The 8 original photos are in `public/images/`.
@@ -113,7 +113,7 @@ In the Supabase SQL Editor, run in order: `supabase/schema.sql`, `add_source_col
 - At least eight real entries, each with a credited source: yes. All 8 original entries show source "Silk Island Cambodia (Koh Dach)" and contributor "Chuosrun Lim". Two photos are duplicated (see section 6).
 - Khmer renders on every screen a user meets, including the queue: **no.** Entries, the contribution form, status labels and the submit message have Khmer. The navigation, login, signup, footer and `/review` do not.
 - Works at phone width: yes, tested at 375px.
-- No test entries, lorem ipsum or TODO comments in shipped pages: no TODO or lorem ipsum in the code (searched `app/`, `components/`, `lib/`). FILL IN: check `/review` and `/my-entries` for leftover test entries and say what you found.
+- No test entries, lorem ipsum or TODO comments in shipped pages: no TODO or lorem ipsum in the code (searched `app/`, `components/`, `lib/`). FILL IN: check `/review` and `/my-collection` for leftover test entries and say what you found.
 - No console errors on the main pages: FILL IN
 - jesseorndorff is a collaborator on this repo: **invitation sent but not accepted yet** (22 Nov 2026). FILL IN once accepted.
 - Supabase project restored and awake on: awake on 22 Nov 2026 (the live API answered).
