@@ -62,7 +62,7 @@ The rules live in the database (`supabase/sprint3_moderation.sql`), not in the i
 
 ## 5. AI use
 
-All AI work went through Cline in VS Code. **DeepSeek V4 Flash** wrote the code changes. **Claude Sonnet 5.5** ran the security and audit review. I ran all SQL and the console attacks myself, so no model touched the live database.
+All AI work went through Cline in VS Code. **DeepSeek V4 Flash** wrote the code changes. **Claude Sonnet 5.5** ran the security and audit review. I ran all SQL and the second-account console attacks myself. The only requests a model made to the live database were read-only checks with the public key, the same access any visitor has.
 
 | Model | Task | Verdict |
 |---|---|---|
@@ -72,7 +72,7 @@ All AI work went through Cline in VS Code. **DeepSeek V4 Flash** wrote the code 
 | DeepSeek V4 Flash | Corrupted characters (em dashes and "..." saved as mojibake) | Kept, after fix commits. Three replaced em dashes with plain hyphens, and on 22 Nov I saw the edit form's "Saving..." button show garbled letters by clicking Save myself. Commit `5554d6c` fixed that and three similar spots in the same file. |
 | DeepSeek V4 Flash | First architecture briefing | **Partly wrong.** It said anyone could read pending entries and self-publish. I checked the live policies, found both were already blocked, and recorded the corrections in `ARCHITECTURE.md`. It was right about other gaps (seed rows editable, open redirects, `reviewers` privileges), which I fixed in `sprint3_moderation.sql`. |
 | DeepSeek V4 Flash | Review of three findings from a partner | All three real and fixed (commit `f7d1d30`): the entry-limit check failed open, the upload policy was not scoped to the user's folder, and dates were hard-coded to one locale. |
-| Claude Sonnet 5.5 | Security and audit review of the whole site | FILL IN: two or three things it found, and what I did about each. |
+| Claude Sonnet 5.5 | Security and audit review of the whole site | **Mixed.** It attacked the live site with only the public key (reads of non-published rows returned nothing, `reviewers` and `review_entry` were refused), and scanned the git history for secrets and found none, so those needed no change. It also checked the README against the code and found claims that were wrong (photo limits, breakpoints, Khmer coverage, the contributor name on edit), which I corrected. It found a garbled Khmer placeholder on the contribute form, fixed in commit `dec731b`. It flagged that an owner could overwrite their own `contributor` column through the API and that the storage bucket may not enforce the photo limits. I did not fix those two, and they are listed under known weaknesses in section 4. |
 
 **How I checked:** I read every diff, ran `npm run build`, compared policy names with the live `pg_policies` before running SQL, and attacked my own site from a second account in the console (self-publish insert and update, `review_entry`, insert into `reviewers`, logged-out read of unpublished rows).
 
@@ -113,11 +113,11 @@ In the Supabase SQL Editor, run in order: `supabase/schema.sql`, `add_source_col
 - At least eight real entries, each with a credited source: yes. All 8 original entries show source "Silk Island Cambodia (Koh Dach)" and contributor "Chuosrun Lim". One photo is shared by two of them (see section 6).
 - Khmer renders on every screen a user meets, including the queue: **no.** Entries, the contribution form, status labels and the submit message have Khmer. The navigation, login, signup, footer and `/review` do not.
 - Works at phone width: yes, tested at 375px.
-- No test entries, lorem ipsum or TODO comments in shipped pages: no TODO or lorem ipsum in the code (searched `app/`, `components/`, `lib/`). FILL IN: check `/review` and `/my-collection` for leftover test entries and say what you found.
-- No console errors on the main pages: FILL IN
+- No test entries, lorem ipsum or TODO comments in shipped pages: no TODO or lorem ipsum in the code (searched `app/`, `components/`, `lib/`). Logged out, the public pages show only the 8 original entries and 3 products (checked 22 Nov 2026), with no placeholder text on them.
+- No console errors on the main pages: yes, checked in the browser console on 22 Nov 2026 and nothing was logged.
 - jesseorndorff is a collaborator on this repo: **invitation sent but not accepted yet** (22 Nov 2026). FILL IN once accepted.
 - Supabase project restored and awake on: awake on 22 Nov 2026 (the live API answered).
 - Demo video link opens in a private window: https://youtu.be/YKCUR8bgLwo (uploaded 22 Nov 2026; the page loads logged out)
-- Reflection pasted in the Canvas submission: FILL IN
-- Posted in the Show Your Archive discussion: FILL IN
+- Reflection pasted in the Canvas submission: yes (22 Nov 2026)
+- Posted in the Show Your Archive discussion: yes (22 Nov 2026)
 - Q&A slot booked for: Dec 1, 9:50 AM
