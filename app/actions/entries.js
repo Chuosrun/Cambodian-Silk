@@ -17,7 +17,6 @@ function slugify(text) {
 }
 
 export async function createEntry(formData, options = {}) {
-  const mode = options?.mode || 'normal';
   let user = null;
   let supabaseHandle = null;
 
@@ -58,39 +57,7 @@ export async function createEntry(formData, options = {}) {
   const image_url = String(formData.get('image_url') || '').trim();
   if (!image_url) return { error: 'At least one photo is required. Upload an image below.' };
 
-  // Stage: must be one of the four lifecycle names (or empty, though empty won't
-  // pass the required checks).
-  const rawStage = String(formData.get('stage') || '').trim();
-  const VALID_STAGES = ['Silkworm', 'Cocoon', 'Thread', 'Cloth'];
-  let stage = '';
-  if (rawStage) {
-    if (!VALID_STAGES.includes(rawStage)) {
-      return { error: 'Stage must be one of: Silkworm, Cocoon, Thread, Cloth.' };
-    }
-    stage = rawStage;
-  }
-
   const slug = `${slugify(title)}-${crypto.randomUUID().slice(0, 6)}`;
-
-  // Duplicate check — only against the user's own form-created entries
-  // (is_seed = false). Seed entries keep their stage value regardless.
-  if (stage && mode !== 'duplicate') {
-    const { data: mine, error: fetchErr } = await supabaseHandle
-      .from('entries')
-      .select('id, stage, title')
-      .eq('user_id', user.id)
-      .eq('is_seed', false);
-    if (fetchErr) return { error: fetchErr.message };
-
-    const clash = (mine || []).find((entry) => entry.stage === stage);
-    if (clash) {
-      return {
-        conflict: true,
-        existingStage: clash.stage,
-        existingTitle: clash.title,
-      };
-    }
-  }
 
   // Rate limit: max 10 entries per user per day (light abuse prevention).
   const today = new Date().toISOString().slice(0, 10);
@@ -129,7 +96,6 @@ export async function createEntry(formData, options = {}) {
       description,
       place,
       image_url,
-      stage,
       contributor: user.user_metadata?.display_name?.trim() || 'Anonymous collector',
       source,
       is_seed: false,
@@ -190,17 +156,11 @@ export async function updateEntry(formData) {
   const place = String(formData.get('place') || '').trim();
   if (place.length > 80) return { error: 'Place must be 80 characters or fewer.' };
 
-  const rawStage = String(formData.get('stage') || '').trim();
-  if (!rawStage) return { error: 'Stage is required.' };
-  const VALID_STAGES = ['Silkworm', 'Cocoon', 'Thread', 'Cloth'];
-  if (!VALID_STAGES.includes(rawStage)) return { error: 'Invalid stage value.' };
-
   const payload = {
     title,
     khmer_title,
     description,
     source,
-    stage: rawStage,
     place,
   };
 

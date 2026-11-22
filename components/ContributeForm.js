@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { createEntry, updateEntry } from '../app/actions/entries';
 
-const VALID_STAGES = ['Silkworm', 'Cocoon', 'Thread', 'Cloth'];
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -31,10 +30,6 @@ function validateField(name, value) {
       const wc = trimmed.split(/\s+/).filter(Boolean).length;
       if (wc > 300) return msg(`Description must be 300 words or fewer (${wc} words).`, `ការពិពណ៌នាត្រូវមានមិនលើសពី ៣០០ ពាក្យ (${wc} ពាក្យ)។`);
       return null;
-    case 'stage':
-      if (!trimmed) return msg('Stage is required.', 'ត្រូវជ្រើសរើសដំណាក់កាល។');
-      if (!VALID_STAGES.includes(trimmed)) return msg('Stage must be one of: Silkworm, Cocoon, Thread, Cloth.', 'ដំណាក់កាលត្រូវតែជាមួយក្នុងចំណោម៖ Silkworm, Cocoon, Thread ឬ Cloth។');
-      return null;
     case 'khmer_title':
       if (trimmed.length > 80) return msg('Khmer title must be 80 characters or fewer.', 'ចំណងជើងជាភាសាខ្មែរត្រូវមានមិនលើសពី ៨០ តួអក្សរ។');
       return null;
@@ -52,7 +47,6 @@ export default function ContributeForm({ user, entry }) {
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
-  const [conflict, setConflict] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
   const isEdit = Boolean(entry);
@@ -60,7 +54,6 @@ export default function ContributeForm({ user, entry }) {
   function clearErrors() {
     setFieldErrors({});
     setGeneralError(null);
-    setConflict(null);
     setSuccessMessage(null);
   }
 async function handleSubmit(event) {
@@ -73,7 +66,7 @@ async function handleSubmit(event) {
 
     // Per-field validation
     const errors = {};
-    for (const field of ['title', 'source', 'description', 'stage', 'khmer_title', 'place']) {
+    for (const field of ['title', 'source', 'description', 'khmer_title', 'place']) {
       const err = validateField(field, formData.get(field));
       if (err) errors[field] = err;
     }
@@ -134,7 +127,7 @@ async function handleSubmit(event) {
         formData.set('slug', entry.slug);
         result = await updateEntry(formData);
       } else {
-        result = await createEntry(formData, { mode: 'normal' });
+        result = await createEntry(formData);
       }
 
       if (result?.error) {
@@ -144,17 +137,10 @@ async function handleSubmit(event) {
         return;
       }
 
-      if (result?.conflict) {
-        setConflict(result);
-        setLoading(false);
-        return;
-      }
-
       // Success
       setLoading(false);
       setFieldErrors({});
       setGeneralError(null);
-      setConflict(null);
       setSuccessMessage({
         en: isEdit
           ? 'Your changes are saved. The entry is back under review and will appear in the archive once it is published.'
@@ -173,29 +159,6 @@ async function handleSubmit(event) {
     }
   }
 
-  async function handleDuplicate() {
-    clearErrors();
-    setLoading(true);
-
-    const form = document.querySelector('.entry-form');
-    const formData = new FormData(form);
-    formData.set('image_url', entry?.image_url || '');
-
-    const result = await createEntry(formData, { mode: 'duplicate' });
-
-    if (result?.error) {
-      console.error('Save error:', result.error);
-      setGeneralError('Something went wrong while saving. Please try again.');
-      setLoading(false);
-      return;
-    }
-
-    if (result?.slug) {
-      router.push(`/entries/${result.slug}`);
-    } else {
-      router.refresh();
-    }
-  }
 return (
     <form className="entry-form" onSubmit={handleSubmit}>
       <h2>{isEdit ? 'Edit entry' : 'Add an entry'}</h2>
@@ -208,23 +171,6 @@ return (
         <div className="notice notice--success" role="status">
           <p>{successMessage.en}</p>
           <p lang="km">{successMessage.km}</p>
-        </div>
-      )}
-
-      {conflict && (
-        <div className="choice-box" role="alert">
-          <p>
-            You already have an entry at <strong>{conflict.existingStage}</strong> stage
-            ({conflict.existingTitle}). Add another at the same stage?
-          </p>
-          <div className="choice-box__actions">
-            <button type="button" className="btn btn--primary btn--small" disabled={loading} onClick={handleDuplicate}>
-              Add duplicate
-            </button>
-            <button type="button" className="btn btn--ghost btn--small" onClick={() => setConflict(null)}>
-              Choose another stage
-            </button>
-          </div>
         </div>
       )}
 
@@ -243,33 +189,19 @@ return (
         {fieldErrors.title && <p className="field__error">{fieldErrors.title.en}<br /><span lang="km">{fieldErrors.title.km}</span></p>}
       </div>
 
-      <div className="entry-form__row">
-        <div className="field">
-          <label className="field__label" htmlFor="contribute-khmer">
-            Khmer title <small>(80 characters max)</small>
-          </label>
-          <input
-            id="contribute-khmer"
-            className="field__input"
-            name="khmer_title"
-            lang="km"
-            defaultValue={entry?.khmer_title || ''}
-            placeholder="ឧ. ការចិញ្ចឹមដង្កូវនាង"
-          />
-          {fieldErrors.khmer_title && <p className="field__error">{fieldErrors.khmer_title.en}<br /><span lang="km">{fieldErrors.khmer_title.km}</span></p>}
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="contribute-stage">
-            Stage <small>(required)</small>
-          </label>
-          <select id="contribute-stage" className="field__input" name="stage" required>
-            <option value="">- Select a stage -</option>
-            {VALID_STAGES.map((s) => (
-              <option key={s} value={s} selected={entry?.stage === s}>{s}</option>
-            ))}
-          </select>
-          {fieldErrors.stage && <p className="field__error">{fieldErrors.stage.en}<br /><span lang="km">{fieldErrors.stage.km}</span></p>}
-        </div>
+      <div className="field">
+        <label className="field__label" htmlFor="contribute-khmer">
+          Khmer title <small>(80 characters max)</small>
+        </label>
+        <input
+          id="contribute-khmer"
+          className="field__input"
+          name="khmer_title"
+          lang="km"
+          defaultValue={entry?.khmer_title || ''}
+          placeholder="ឧ. ការចិញ្ចឹមដង្កូវនាង"
+        />
+        {fieldErrors.khmer_title && <p className="field__error">{fieldErrors.khmer_title.en}<br /><span lang="km">{fieldErrors.khmer_title.km}</span></p>}
       </div>
 
       <div className="field">
@@ -282,7 +214,7 @@ return (
           name="description"
           rows={5}
           defaultValue={entry?.description || ''}
-          placeholder="Describe what you observed, documented, or learned at this stage."
+          placeholder="Describe what you observed, documented, or learned."
         />
         {fieldErrors.description && <p className="field__error">{fieldErrors.description.en}<br /><span lang="km">{fieldErrors.description.km}</span></p>}
       </div>

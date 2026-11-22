@@ -10,11 +10,10 @@ export default function EntryForm({ user }) {
   const fileRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
-  const [pending, setPending] = useState(null); // duplicate-stage decision
 
-  async function doCreate(form, mode = 'normal') {
+  async function doCreate(form) {
     try {
-      return await createEntry(form, { mode });
+      return await createEntry(form);
     } catch (err) {
       return { error: err.message || 'Something went wrong.' };
     }
@@ -25,7 +24,6 @@ export default function EntryForm({ user }) {
     const formEl = event.currentTarget;
     setLoading(true);
     setStatus(null);
-    setPending(null);
 
     // --- Client-side image validation ---
     const file = fileRef.current?.files?.[0];
@@ -74,41 +72,15 @@ export default function EntryForm({ user }) {
     const form = new FormData(formEl);
     form.set('image_url', imageUrl);
 
-    const result = await doCreate(form, 'normal');
+    const result = await doCreate(form);
 
     if (result?.ok) {
       setStatus({ kind: 'success', message: 'Your entry has been submitted and is waiting for review. It will appear once it is published.' });
       formEl.reset();
       if (fileRef.current) fileRef.current.value = '';
       router.refresh();
-    } else if (result?.conflict) {
-      // The stage already has an entry - ask how to proceed.
-      setPending({ ...result, form, formEl });
     } else {
       setStatus({ kind: 'error', message: result?.error || 'Something went wrong.' });
-    }
-
-    setLoading(false);
-  }
-
-  async function handleChoice(mode) {
-    if (!pending) return;
-    setLoading(true);
-    setStatus(null);
-
-    const result = await doCreate(pending.form, mode);
-
-    if (result?.ok) {
-      setStatus({ kind: 'success', message: 'Your entry has been submitted and is waiting for review. It will appear once it is published.' });
-      pending.formEl.reset();
-      if (fileRef.current) fileRef.current.value = '';
-      setPending(null);
-      router.refresh();
-    } else if (result?.conflict) {
-      setPending({ ...result, form: pending.form, formEl: pending.formEl });
-    } else {
-      setStatus({ kind: 'error', message: result?.error || 'Something went wrong.' });
-      setPending(null);
     }
 
     setLoading(false);
@@ -119,35 +91,6 @@ export default function EntryForm({ user }) {
       <h2>Add an entry</h2>
 
       {status && <p className={`notice notice--${status.kind}`}>{status.message}</p>}
-
-      {pending && (
-        <div className="choice-box" role="alert">
-          <p>
-            Stage <strong>{pending.existingStage}</strong> is already used by{' '}
-            <strong>{pending.existingTitle}</strong>. What would you like to do?
-          </p>
-          <div className="choice-box__actions">
-            <button
-              type="button"
-              className="btn btn--primary btn--small"
-              disabled={loading}
-              onClick={() => handleChoice('duplicate')}
-            >
-              Add duplicate
-            </button>
-            <button
-              type="button"
-              className="btn btn--ghost btn--small"
-              disabled={loading}
-              onClick={() => {
-                setPending(null);
-              }}
-            >
-              Choose another stage
-            </button>
-          </div>
-        </div>
-      )}
 
       <div className="field">
         <label className="field__label" htmlFor="entry-title">
@@ -162,37 +105,18 @@ export default function EntryForm({ user }) {
         />
       </div>
 
-      <div className="entry-form__row">
-        <div className="field">
-          <label className="field__label" htmlFor="entry-khmer">
-            Khmer title
-          </label>
-          <input
-            id="entry-khmer"
-            className="field__input"
-            name="khmer_title"
-            lang="km"
-            maxLength={80}
-            placeholder="ឧ. ការចិញ្ចឹមដង្កូវនាង"
-          />
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="entry-stage">
-            Stage <small>(required)</small>
-          </label>
-          <select
-            id="entry-stage"
-            className="field__input"
-            name="stage"
-            required
-          >
-            <option value="">- Select a stage -</option>
-            <option value="Silkworm">Silkworm</option>
-            <option value="Cocoon">Cocoon</option>
-            <option value="Thread">Thread</option>
-            <option value="Cloth">Cloth</option>
-          </select>
-        </div>
+      <div className="field">
+        <label className="field__label" htmlFor="entry-khmer">
+          Khmer title
+        </label>
+        <input
+          id="entry-khmer"
+          className="field__input"
+          name="khmer_title"
+          lang="km"
+          maxLength={80}
+          placeholder="ឧ. ការចិញ្ចឹមដង្កូវនាង"
+        />
       </div>
 
       <div className="field">
@@ -204,7 +128,7 @@ export default function EntryForm({ user }) {
           className="field__input"
           name="description"
           rows={4}
-          placeholder="What did you observe, document, or learn at this stage?"
+          placeholder="What did you observe, document, or learn?"
         />
       </div>
 
