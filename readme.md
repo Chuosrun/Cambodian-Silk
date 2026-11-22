@@ -13,11 +13,11 @@ An archive of the lifecycle of Tromol Meas, Cambodia's rare golden raw silk, dra
 
 People in Cambodia who want to see, and add to, the record of how their own silk is made: farmers, weavers, and their students and relatives.
 
-- **Khmer first.** Every original entry has a Khmer title. Form errors, the "waiting for review" message and the status labels on `/my-collection` are bilingual.
+- **Khmer first.** Every original entry has a Khmer title. The status labels on `/my-collection` are bilingual, and so are the form errors and the "waiting for review" message on `/contribute` and the Edit page.
 - **Phones first.** Layout breakpoints at 560px, 640px, 768px and 900px, tested at 375px. The hero photo collage is not rendered on phones, so those images are never downloaded on a slow connection.
 - **No name rules.** There is no first-name/last-name split. The credit is the account's display name, or "Anonymous collector" if none is set.
 - **Photos capped.** JPG, PNG or WebP, 5 MB, checked in the form.
-- **Where Khmer is missing.** The navigation, login and signup pages, the footer and the `/review` queue are English only. Entry titles, the contribution form, status labels and the submit message are Khmer too.
+- **Where Khmer is missing.** The navigation, login and signup pages, the footer and the `/review` queue are English only. The add form on `/my-collection` and its messages are English only. Entry titles, status labels, and the `/contribute` and Edit forms with their messages have Khmer.
 
 ## 3. How it works
 
@@ -111,7 +111,7 @@ In the Supabase SQL Editor, run in order: `supabase/schema.sql`, `add_source_col
 - Contributors can edit and delete only their own entries: yes (reviewers can also delete non-original entries, but not edit them).
 - No secrets in the repo history: yes, `.env.local` is gitignored and was never committed. `git log origin/main -G "sb_secret_|eyJ[A-Za-z0-9_-]{20,}\."` finds no commits (22 Nov 2026). The only env file in history is `.env.local.example`, which holds placeholders.
 - At least eight real entries, each with a credited source: yes. All 8 original entries show source "Silk Island Cambodia (Koh Dach)" and contributor "Chuosrun Lim". One photo is shared by two of them (see section 6).
-- Khmer renders on every screen a user meets, including the queue: **no.** Entries, the contribution form, status labels and the submit message have Khmer. The navigation, login, signup, footer and `/review` do not.
+- Khmer renders on every screen a user meets, including the queue: **no.** Entries, status labels, and the `/contribute` and Edit forms with their messages have Khmer. The navigation, login, signup, footer, `/review` and the add form on `/my-collection` do not.
 - Works at phone width: yes, tested at 375px.
 - No test entries, lorem ipsum or TODO comments in shipped pages: no TODO or lorem ipsum in the code (searched `app/`, `components/`, `lib/`). Logged out, the public pages show only the 8 original entries and 3 products (checked 22 Nov 2026), with no placeholder text on them.
 - No console errors on the main pages: yes, checked in the browser console on 22 Nov 2026 and nothing was logged.
