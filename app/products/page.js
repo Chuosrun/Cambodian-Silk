@@ -1,5 +1,5 @@
 import { getPublishedProducts } from '@/lib/data';
-import EntryCard from '@/components/EntryCard';
+import ProductsGrid from '@/components/ProductsGrid';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,11 +29,7 @@ export default async function ProductsPage() {
       )}
 
       {products.length > 0 ? (
-        <section className="grid" aria-label="Silk products shared by the community">
-          {products.map((product) => (
-            <EntryCard key={product.slug || product.id} entry={product} />
-          ))}
-        </section>
+        <ProductsGrid products={products} />
       ) : !dbError ? (
         <div className="empty-state">
           <p className="empty-state__text">

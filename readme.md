@@ -34,7 +34,7 @@ People in Cambodia who want to see, and add to, the record of how their own silk
 | Route | What it shows |
 |---|---|
 | `/` | The 8 original entries, with search and stage filters, and a preview of up to 3 published products below the grid (a "Products" button jumps to it) |
-| `/products` | All published contributor entries |
+| `/products` | All published contributor entries, with a search box (title, Khmer title, description, source, place) |
 | `/entries/[id]` | One entry (Edit and Delete for its owner) |
 | `/my-collection` | Your entries with their review status, Edit and Delete, and the form to add a new one. Once you have entries, a big "Add Your Collection" button at the top jumps to the form at the bottom. |
 | `/contribute` | Add an entry with a photo (the same form that Edit uses) |
