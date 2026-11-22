@@ -47,9 +47,6 @@ export default async function SiteNav() {
               <Link href="/my-collection" className="nav__link">
                 My collection
               </Link>
-              <Link href="/my-entries" className="nav__link">
-                My entries
-              </Link>
               {isReviewer && (
                 <Link href="/review" className="nav__link">
                   Review

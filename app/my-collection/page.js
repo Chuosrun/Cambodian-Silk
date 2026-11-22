@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import EntryCard from '../../components/EntryCard';
@@ -5,6 +6,12 @@ import EntryForm from './EntryForm';
 import DeleteButton from '../../components/DeleteButton';
 
 export const dynamic = 'force-dynamic';
+
+const STATUS_LABELS = {
+  pending: { en: 'Pending review', km: 'កំពុងរង់ចាំការត្រួតពិនិត្យ' },
+  published: { en: 'Published', km: 'បានបោះពុម្ពផ្សាយ' },
+  returned: { en: 'Returned', km: 'បានបញ្ជូនត្រឡប់' },
+};
 
 export default async function MyCollection() {
   let user = null;
@@ -40,22 +47,14 @@ export default async function MyCollection() {
     dbError = err.message;
   }
 
-  const STAGE_ORDER = { Silkworm: 1, Cocoon: 2, Thread: 3, Cloth: 4 };
-
-  // Keep the collection in lifecycle order, with a deterministic tiebreaker
-  // so entries at the same stage (e.g. both 'Thread') appear in slug order.
-  myEntries.sort((a, b) => {
-    const na = STAGE_ORDER[a.stage] || 0;
-    const nb = STAGE_ORDER[b.stage] || 0;
-    if (na !== nb) return na - nb;
-    return a.slug.localeCompare(b.slug);
-  });
+  const hasEntries = myEntries.length > 0;
 
   return (
     <main className="page">
       <h1 className="page__title">My collection</h1>
       <p className="page__lead">
-        Everything you add lives here and in the public archive. You can add or remove your own
+        Everything you add, with its review status. A pending or returned entry waits for a
+        reviewer before it appears in the public archive. You can edit or remove your own
         entries anytime - nobody else can touch them.
       </p>
 
@@ -66,22 +65,52 @@ export default async function MyCollection() {
         </p>
       )}
 
-      <EntryForm user={user} />
+      {hasEntries ? (
+        <>
+          <p>
+            <a href="#add-entry" className="btn btn--primary btn--large">
+              Add Your Collection
+            </a>
+          </p>
 
-      {myEntries.length > 0 ? (
-        <section className="collection-grid" aria-label="My entries">
-          {myEntries.map((entry) => (
-            <div key={entry.id} className="collection__item">
-              <EntryCard entry={entry} />
-              {!entry.is_seed && <DeleteButton slug={entry.slug} />}
-            </div>
-          ))}
-        </section>
+          <section className="collection-grid" aria-label="My entries">
+            {myEntries.map((entry) => {
+              const label = STATUS_LABELS[entry.status] || {
+                en: entry.status || 'Unknown',
+                km: '',
+              };
+              return (
+                <div key={entry.id} className="collection__item">
+                  <EntryCard entry={entry} />
+                  <p className="status-badge" aria-label={`Status: ${label.en}`}>
+                    {label.en}
+                    {label.km && <span lang="km"> · {label.km}</span>}
+                  </p>
+                  {!entry.is_seed && (
+                    <>
+                      <Link className="btn btn--small" href={`/edit/${entry.slug}`}>
+                        Edit
+                      </Link>
+                      <DeleteButton slug={entry.slug} />
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </section>
+
+          <div id="add-entry" className="add-entry-anchor">
+            <EntryForm user={user} />
+          </div>
+        </>
       ) : (
-        <p className="empty">
-          You haven&apos;t added any entries yet. Use the form above to start your collection.
-          (Make sure your database is set up and you&apos;re signed in to see entries here.)
-        </p>
+        <>
+          <EntryForm user={user} />
+          <p className="empty">
+            You haven&apos;t added any entries yet. Use the form above to start your collection.
+            (Make sure your database is set up and you&apos;re signed in to see entries here.)
+          </p>
+        </>
       )}
     </main>
   );

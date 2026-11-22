@@ -791,7 +791,26 @@ textarea.field__input {
   flex-basis: 100%;
 }
 
-/* ---- Review status badge on /my-entries ---- */
+/* ---- Big "Add Your Collection" button and its jump target on /my-collection ---- */
+.btn--large {
+  padding: 1rem 2rem;
+  font-size: 1.15rem;
+  border-radius: 10px;
+}
+
+.add-entry-anchor {
+  margin-top: 3rem;
+  scroll-margin-top: 5rem;
+}
+
+@media (max-width: 560px) {
+  .btn--large {
+    display: flex;
+    width: 100%;
+  }
+}
+
+/* ---- Review status badge on /my-collection ---- */
 .status-badge {
   display: inline-flex;
   align-items: center;

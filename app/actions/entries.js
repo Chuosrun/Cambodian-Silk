@@ -201,7 +201,6 @@ export async function updateEntry(formData) {
     revalidatePath('/');
     revalidatePath('/my-collection');
     revalidatePath('/products');
-    revalidatePath('/my-entries');
     revalidatePath(`/entries/${slug}`);
     return { ok: true, slug };
   } catch (err) {
@@ -265,6 +264,5 @@ export async function deleteEntry(formData) {
   revalidatePath('/my-collection');
   revalidatePath('/review');
   revalidatePath('/products');
-  revalidatePath('/my-entries');
   redirect(returnTo);
 }
