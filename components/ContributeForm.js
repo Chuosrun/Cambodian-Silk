@@ -1,4 +1,4 @@
-﻿﻿'use client';
+'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -71,7 +71,7 @@ async function handleSubmit(event) {
       if (err) errors[field] = err;
     }
 
-    // File validation â€” required on create, optional on edit
+    // File validation - required on create, optional on edit
     const file = fileRef.current?.files?.[0];
     if (!file && !isEdit) {
       errors.image = 'At least one photo is required (JPG, PNG, or WebP).';
@@ -176,7 +176,7 @@ return (
 
       <div className="field">
         <label className="field__label" htmlFor="contribute-title">
-          Title <small>(required â€” 80 characters max)</small>
+          Title <small>(required - 80 characters max)</small>
         </label>
         <input
           id="contribute-title"
@@ -206,7 +206,7 @@ return (
 
       <div className="field">
         <label className="field__label" htmlFor="contribute-description">
-          Description <small>(required â€” 300 words max)</small>
+          Description <small>(required - 300 words max)</small>
         </label>
         <textarea
           id="contribute-description"
@@ -254,7 +254,7 @@ return (
       </div>
 
       <button type="submit" className="btn btn--primary" disabled={loading}>
-        {loading ? 'Savingâ€¦' : isEdit ? 'Save changes' : 'Add to archive'}
+        {loading ? 'Saving...' : isEdit ? 'Save changes' : 'Add to archive'}
       </button>
     </form>
   );
