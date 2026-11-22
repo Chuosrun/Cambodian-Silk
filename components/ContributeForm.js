@@ -254,7 +254,7 @@ return (
             name="khmer_title"
             lang="km"
             defaultValue={entry?.khmer_title || ''}
-            placeholder="áž§. áž€áž¶ážšáž…áž·áž‰áŸ’áž…áž¹áž˜ážŠáž„áŸ’áž€áž¼ážœáž“áž¶áž„"
+            placeholder="ឧ. ការចិញ្ចឹមដង្កូវនាង"
           />
           {fieldErrors.khmer_title && <p className="field__error">{fieldErrors.khmer_title.en}<br /><span lang="km">{fieldErrors.khmer_title.km}</span></p>}
         </div>

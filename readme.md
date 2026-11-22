@@ -79,7 +79,7 @@ All AI work went through Cline in VS Code. **DeepSeek V4 Flash** wrote the code 
 ## 6. Sources and credits
 
 - **The 8 original entries** are credited on every card to contributor **Chuosrun Lim**, source **Silk Island Cambodia (Koh Dach)**. Their subject matter comes from silkworm farmers and mulberry cultivators on Koh Oknha Tei and Koh Dach.
-- **Photos** in `public/images/`: FILL IN who took them and when. Credit any photo I did not take.
+- **Photos** in `public/images/`: I (Chuosrun Lim) took all of these photos at Silk Island Cambodia (Koh Dach).
 - **Gap:** "Young Silkworms Feeding" and "The Feeding Cycle" share one photo (`01_Young_Silkworms_Feeding.jpg`). One needs its own.
 - **Contributor entries** show the account display name and the source typed on the form (required). The two products on the shelf are credited to "Prey Kabbas Weavers Cooperative" and "National Museum of Cambodia".
 
