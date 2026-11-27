@@ -100,7 +100,11 @@ Create `.env.local` in the project root (gitignored), names only:
 
 The URL and publishable key are public by design; row-level security protects the data. No secret or service-role key is used or belongs in the repo.
 
-In the Supabase SQL Editor, run in order: `supabase/schema.sql`, `add_source_column.sql`, `sprint2_harden.sql`, the `photos` bucket and policies from the Lab 7 guide (not in the repo), then `sprint3_moderation.sql`. Add yourself as a reviewer by hand, with your own id (never commit it):
+**Fresh project (recommended):** run these from `supabase/` in the SQL Editor, in order: `tables.sql`, `functions.sql`, `policies.sql`. They are dumps of the live database taken on 27 Nov 2026, so they match what is deployed. Then create a public storage bucket named `photos` in the dashboard (a bucket is a setting, so it is not in the SQL).
+
+**History:** the earlier files `schema.sql`, `add_source_column.sql`, `sprint2_harden.sql` and `sprint3_moderation.sql` are the migrations I ran sprint by sprint. `schema.sql` still creates an older bucket called `entry-images`, which the app no longer uses, so prefer the three dumps above.
+
+Add yourself as a reviewer by hand, with your own id (never commit it):
 `insert into public.reviewers (user_id) values ('<your-user-uuid>');`
 
 ## 8. Submission checklist
