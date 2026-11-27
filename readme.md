@@ -115,7 +115,7 @@ In the Supabase SQL Editor, run in order: `supabase/schema.sql`, `add_source_col
 - Works at phone width: yes, tested at 375px.
 - No test entries, lorem ipsum or TODO comments in shipped pages: no TODO or lorem ipsum in the code (searched `app/`, `components/`, `lib/`). Logged out, the public pages show only the 8 original entries and 3 products (checked 22 Nov 2026), with no placeholder text on them.
 - No console errors on the main pages: yes, checked in the browser console on 22 Nov 2026 and nothing was logged.
-- jesseorndorff is a collaborator on this repo: **invitation sent but not accepted yet** (22 Nov 2026). FILL IN once accepted.
+- jesseorndorff is a collaborator on this repo: yes, the invitation was accepted (checked on GitHub, 22 Nov 2026).
 - Supabase project restored and awake on: awake on 22 Nov 2026 (the live API answered).
 - Demo video link opens in a private window: https://youtu.be/YKCUR8bgLwo (uploaded 22 Nov 2026; the page loads logged out)
 - Reflection pasted in the Canvas submission: yes (22 Nov 2026)
